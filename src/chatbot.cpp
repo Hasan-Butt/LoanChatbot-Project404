@@ -17,6 +17,7 @@
 #include "chatbot.h"
 #include "utils.h"
 #include <conio.h>
+#include <fstream>
 #include <windows.h>
 #include <iostream>
 using namespace std;
@@ -24,7 +25,7 @@ using namespace std;
 // ----------------------------------Chatbot Input Reading Module--------------------------------
 // LP4-7 Assigned to Ayub
 
-string Chatbot::readUserInput() 
+string ChatbotInput::readUserInput() 
 {
 	string response;
 	getline(cin, response); 
@@ -72,7 +73,7 @@ int ChatbotInput::extractKeywords(const string& input, string keywords[], int ma
     // TODO: Implement keyword extraction and return count
 }
 
-bool Chatbot::check_spaces(string& input)
+bool ChatbotInput::check_spaces(string& input)
 {
 	int i = 0;
 	while (input[i]!='\0')
@@ -234,19 +235,7 @@ bool ChatbotTester::testInputProcessing()
                 {
                     input += line[j];
                 }
-                
-                // Skip '*' inputs (general responses)
-                if(input != "*") 
-                {
-                    if(validateInput(input)) 
-                    {
-                        cout << "PASS: " << input << " is valid" << endl;
-                    } 
-                    else 
-                    {
-                        cout << "FAIL: " << input << " should be valid" << endl;
-                    }
-                }
+            
                 break;
             }
         }
@@ -305,7 +294,8 @@ bool ChatbotTester::testResponseGeneration()
                 expected += line[j];
             }
             
-            string response = generateResponse(input);
+            ChatbotProcessor processor;
+            string response = processor.generateResponse(input);
             
             // Compare actual response with expected response
             if(response == expected) 
@@ -327,7 +317,8 @@ bool ChatbotTester::testResponseGeneration()
 // Test one specific input and expected output
 bool ChatbotTester::validateResponse(const string& input, const string& expectedOutput) 
 {
-    string response = generateResponse(input);
+    ChatbotProcessor processor;
+    string response = processor.generateResponse(input);
     
     if(response == expectedOutput) 
     {

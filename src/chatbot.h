@@ -30,14 +30,15 @@ public:
     string readUserInput();
     
     // Validate and sanitize input
-    bool validateInput(const string& input);
+    string validateInput(string& input);
     
     // Process input for special commands or keywords
     // keywords: output array to store extracted keywords
     // return: number of keywords extracted
     int extractKeywords(const string& input, string keywords[], int maxKeywords = MAX_KEYWORDS);
+
     //this is what i added to check the spaces 
-    bool Chatbot::check_spaces(string& input);
+    bool check_spaces(string& input);
 
 };
 
@@ -85,6 +86,9 @@ public:
     // Test response generation
     bool testResponseGeneration();
     
+    //Testing on file for home loan
+    bool testHomeLoanData();
+
     // Validate response accuracy
     bool validateResponse(const string& input, const string& expectedOutput);
     
