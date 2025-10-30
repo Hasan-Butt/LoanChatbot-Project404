@@ -37,9 +37,6 @@ public:
     // return: number of keywords extracted
     int extractKeywords(const string& input, string keywords[], int maxKeywords = MAX_KEYWORDS);
 
-    //this is what i added to check the spaces 
-    bool check_spaces(string& input);
-
 };
 
 // ---------------------------------Chatbot Response Processing Module----------------------------

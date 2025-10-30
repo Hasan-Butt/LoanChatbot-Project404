@@ -33,6 +33,7 @@ void setColor(int color);
 bool isNumber(const string& str);
 bool isNotEmpty(const string& str);
 int stringToInt(const string& str);
+bool check_spaces(string& input);
 
 // Range checks
 bool isValidAmount(double amount);

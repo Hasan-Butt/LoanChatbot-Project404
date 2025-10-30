@@ -73,23 +73,7 @@ int ChatbotInput::extractKeywords(const string& input, string keywords[], int ma
     // TODO: Implement keyword extraction and return count
 }
 
-bool ChatbotInput::check_spaces(string& input)
-{
-	int i = 0;
-	while (input[i]!='\0')
-	{
-		if (input[i] != ' ')
-			break;
-		i++;
-	}
 
-	if (i == input.length()&&i!=0) // if i==0 then it means the user only entered enter key wo uper wala while loop chle ga hi nhi, aour aap ne spaces ke liye check hi nhi kiya . then how can you say ke there are all or no spaces jb check hi nhi kiya to? its an empty string. an empty string!="   " a string which has spaces. so i!=0 to handle that thing.
-	{
-		return true;
-	}
-	
-	return false;
-}
 // ---------------------------------Chatbot Response Processing Module----------------------------
 // LP4-8 Assigned to Kabeer
 
