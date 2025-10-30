@@ -17,6 +17,18 @@
 #include <string>
 using namespace std;
 
+//Added colors support
+#define COLOR_BLUE 9
+#define COLOR_GREEN 10
+#define COLOR_CYAN 11
+#define COLOR_RED 12
+#define COLOR_MAGENTA 13
+#define COLOR_YELLOW 14
+#define COLOR_WHITE 15
+#define COLOR_GRAY 8
+#define COLOR_DARK_CYAN 3
+
+void setColor(int color);
 // Basic validation
 bool isNumber(const string& str);
 bool isNotEmpty(const string& str);

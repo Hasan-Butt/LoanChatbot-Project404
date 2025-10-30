@@ -16,6 +16,7 @@
 #include <string>
 #include <cctype>
 #include <fstream>
+#include <windows.h>
 using namespace std;
 
 
@@ -65,4 +66,10 @@ double calculateSimpleInterest(double principal, double rate, double time) {
 // Log user-chatbot interactions to a file
 void logInteraction(const string& userInput, const string& botResponse) {
     
+}
+
+// ======================= Colors Support =========================
+void setColor(int color) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, color);
 }
