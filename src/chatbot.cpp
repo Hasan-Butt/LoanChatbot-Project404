@@ -24,18 +24,71 @@ using namespace std;
 // ----------------------------------Chatbot Input Reading Module--------------------------------
 // LP4-7 Assigned to Ayub
 
-string ChatbotInput::readUserInput() {
-    // TODO: Implement reading input from console
+string Chatbot::readUserInput() 
+{
+	string response;
+	getline(cin, response); 
+	response = validateInput(response);
+	return response;
 }
 
-bool ChatbotInput::validateInput(const string& input) {
+string ChatbotInput::validateInput(string& input) {
     // TODO: Implement input validation
+    while (check_spaces(input)|| input == "") // only spaces or empty string
+	{
+		if (check_spaces(input))
+		{
+			system("cls");
+			cout << "string contains only spaces! \n";
+			getline(cin, input);
+		}
+		else
+		{
+			system("cls");
+			cout << "empty string! \n";
+			getline(cin, input);
+		}
+	}
+
+	// spaces before or after the text
+	// .......hi....... will be fixed to hi   [..... represent spaces]
+		size_t start = input.find_first_not_of(' '); // checks from left to right ,finds index of the first character that is not a space.
+		size_t end = input.find_last_not_of(' '); //  checks from  right to left ,finds index of the first character that is not a space.
+		input = input.substr(start, end - start + 1); // this basically makes a new string from the start index to the end-1 index [ which is our actual valid string ] 
+	
+	// making it lower case for comparison
+		int i = 0;
+		while (i < input.length())
+		{
+			char c = input[i];
+			c=tolower(c);
+			input[i] = c;
+			i++;
+		}
+		return input;
 }
 
 int ChatbotInput::extractKeywords(const string& input, string keywords[], int maxKeywords) {
     // TODO: Implement keyword extraction and return count
 }
 
+bool Chatbot::check_spaces(string& input)
+{
+	int i = 0;
+	while (input[i]!='\0')
+	{
+		if (input[i] != ' ')
+			break;
+		i++;
+	}
+
+	if (i == input.length()&&i!=0) // if i==0 then it means the user only entered enter key wo uper wala while loop chle ga hi nhi, aour aap ne spaces ke liye check hi nhi kiya . then how can you say ke there are all or no spaces jb check hi nhi kiya to? its an empty string. an empty string!="   " a string which has spaces. so i!=0 to handle that thing.
+	{
+		return true;
+	}
+	
+	return false;
+}
 // ---------------------------------Chatbot Response Processing Module----------------------------
 // LP4-8 Assigned to Kabeer
 
