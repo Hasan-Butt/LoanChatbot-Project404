@@ -36,6 +36,39 @@ bool isNotEmpty(const string& str) {
 int stringToInt(const string& str) {
    
 }
+// Trim String and return corrected
+string trimString(string s) {
+    int start = 0;
+    int end = s.length() - 1;
+
+    // remove leading spaces
+    while (start <= end && (s[start] == ' ' || s[start] == '\t' || s[start] == '\n' || s[start] == '\r')) {
+        start++;
+    }
+
+    // remove trailing spaces
+    while (end >= start && (s[end] == ' ' || s[end] == '\t' || s[end] == '\n' || s[end] == '\r')) {
+        end--;
+    }
+
+    string result = "";
+    for (int i = start; i <= end; i++) {
+        result += s[i];
+    }
+
+    return result;
+}
+
+// convert whole string to lower-case
+string toLowerString(string s) {
+    for (int i = 0; s[i] != '\0'; i++) {
+        if (s[i] >= 'A' && s[i] <= 'Z') {
+            s[i] = s[i] + 32; // convert to lowercase
+        }
+    }
+    return s;
+}
+
 //This is what I added to check the spaces 
 bool check_spaces(string& input)
 {

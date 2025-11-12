@@ -77,27 +77,92 @@ int ChatbotInput::extractKeywords(const string& input, string keywords[], int ma
 // ---------------------------------Chatbot Response Processing Module----------------------------
 // LP4-8 Assigned to Kabeer
 
-string ChatbotProcessor::generateResponse(const string& input, string filename = "Utterances.txt") {
-    ifstream file(filename);
+string ChatbotProcessor::generateResponse(const string& input, string filename) {
+   ifstream file(filename);
     if (!file.is_open()) {
-		cerr << "Error: Could not open file " << filename << endl;
+        cerr << "Error: Could not open file " << filename << endl;
         return "";
     }
-	string line;
-	while (getline(file, line)) {
-		int pos = line.find('#');
-		if (pos != string::npos) {
-			string storedInput = line.substr(0, pos);
-			string response = line.substr(pos + 1);
-			if (input == storedInput) {
-				file.close();
-				return response;
-			}
-		}
-	}
-	file.close();
-	return "Sorry, I didn't understand that. Could you please rephrase?";
+
+    string target = toLowerString(trimString(input));
+    string wildcardResponse = "";
+    string line;
+
+    while (getline(file, line)) {
+        int pos = line.find('#');
+        if (pos == -1) continue;
+
+        string storedInput = line.substr(0, pos);
+        string response = line.substr(pos + 1);
+
+        string key = toLowerString(trimString(storedInput));
+
+        // check for exact match
+        if (key == target && key != "") {
+            file.close();
+            return trimString(response);
+        }
+
+        // check for wildcard
+        if (key == "*") {
+            wildcardResponse = trimString(response);
+        }
+    }
+
+    file.close();
+
+    // 🏠 Handle area selection for home loan
+    if (input == "1" || input == "2" || input == "3" || input == "4") {
+        ifstream homeFile("data/Home.txt");
+        if (!homeFile.is_open()) {
+            return "Error: Cannot open Home.txt";
+        }
+
+        string line;
+        getline(homeFile, line); // skip header
+        string targetArea = "Area " + input;
+        string result = "\nAvailable Home Loan Options for " + targetArea + ":\n";
+
+        bool found = false;
+
+        while (getline(homeFile, line)) {
+            int pos1=-1,pos2=-1,pos3=-1,pos4=-1,count=0;
+            for (int i=0;i<line.length();i++){
+                if (line[i]=='#'){
+                    count++;
+                    if(count==1) pos1=i;
+                    else if(count==2) pos2=i;
+                    else if(count==3) pos3=i;
+                    else if(count==4) pos4=i;
+                }
+            }
+
+            if(pos1!=-1 && pos2!=-1 && pos3!=-1 && pos4!=-1){
+                string area="", size="", inst="", price="", down="";
+                for(int i=0;i<pos1;i++) area+=line[i];
+                for(int i=pos1+1;i<pos2;i++) size+=line[i];
+                for(int i=pos2+1;i<pos3;i++) inst+=line[i];
+                for(int i=pos3+1;i<pos4;i++) price+=line[i];
+                for(int i=pos4+1;i<line.length();i++) down+=line[i];
+
+                if(area==targetArea){
+                    found = true;
+                    result += "- Size: " + size + 
+                              " | Installments: " + inst + 
+                              " | Price: " + price + 
+                              " | Down Payment: " + down + "\n";
+                }
+            }
+        }
+        homeFile.close();
+
+        if (!found) result += "No options available for " + targetArea + ".";
+        return result;
+    }
+    if (wildcardResponse != "") return wildcardResponse;
+    return "Sorry, I didn't understand that. Could you please rephrase?";
 }
+// ...existing code...
 
 string ChatbotProcessor::analyzeIntent(const string& input) {
     // TODO: Implement intent/sentiment analysis
@@ -115,11 +180,16 @@ string ChatbotProcessor::getContextInfo(const string& query) {
 // LP4-9 Assigned to Hasan
 
 void ChatbotDisplay::displayResponse(const string& response) {
-    cout << "\nLoanMate: \n";
+
+    setColor(COLOR_CYAN);          
+    cout << "LoanMate: ";
+    setColor(COLOR_WHITE);
+
     for (int i = 0; response[i] != '\0'; i++) {
         cout << response[i];
         Sleep(10);
     }
+    cout<<endl<<endl;
 }
 
 void ChatbotDisplay::showWelcomeMessage() {
@@ -138,11 +208,14 @@ void ChatbotDisplay::showWelcomeMessage() {
     cout << "     | |__| |_| / ___ \\| |\\  | |  | |/ ___ \\| | | |___ \n";
     cout << "     |_____\\___/_/   \\_\\_| \\_|_|  |_/_/   \\_\\_| |_____|\n";
     cout << "\n";
+
+    setColor(COLOR_YELLOW);
+    cout << "        Version 1.0 | Developed by Team Project404\n";
     setColor(COLOR_CYAN);
     cout << "  ======================================================\n";
 
     setColor(COLOR_WHITE);
-    cout << "          Loading";
+    cout << "            Initializing LoanMate AI Engine";
 
     // Animated dots
     for (int i = 0; i < 3; i++) {
@@ -179,7 +252,7 @@ void ChatbotDisplay::showWelcomeMessage() {
 
     setColor(COLOR_CYAN);
     cout << "  ======================================================\n\n";
-
+    
     setColor(COLOR_YELLOW);
     cout << "          Press any key to start chatting...\n";
     setColor(COLOR_WHITE);
@@ -206,8 +279,10 @@ string ChatbotDisplay::formatOutput(const string& text) {
 
 // Test if all inputs from Utterances.txt are validated correctly
 bool ChatbotTester::testInputProcessing()
-{
-    cout << "=== Testing Input Processing ===" << endl;
+{   
+    setColor(COLOR_MAGENTA);
+    cout << "\n=== Testing Input Processing ===" << endl<< endl;
+    setColor(COLOR_WHITE);
 
     ifstream file("data/Utterances.txt");
     string line;
@@ -218,6 +293,8 @@ bool ChatbotTester::testInputProcessing()
         cout << "ERROR: Cannot open data/Utterances.txt" << endl;
         return false;
     }
+
+    ChatbotInput inputProcessor;
 
     // Read each line from data/Utterances.txt file
     while (getline(file, line))
@@ -233,11 +310,13 @@ bool ChatbotTester::testInputProcessing()
                 string input = "";
 
                 // Extract input part before '#'
-                for (int j = 0; j < i; j++)
-                {
-                    input += line[j];
-                }
+                for (int j = 0; j < i; j++) input += line[j];                
 
+                // sanitize using validateInput
+                string tmp = input;
+                string sanitized = inputProcessor.validateInput(tmp);
+
+                cout << "Original: \"" << input << "\" -> Sanitized: \"" << sanitized << "\"" << endl;
                 break;
             }
         }
@@ -249,8 +328,10 @@ bool ChatbotTester::testInputProcessing()
 // Test if responses match expected outputs from Utterances.txt
 bool ChatbotTester::testResponseGeneration()
 {
-    cout << "=== Testing Response Generation ===" << endl;
-
+    setColor(COLOR_MAGENTA);
+    cout << "\n=== Testing Response Generation ===" << endl<< endl;
+    setColor(COLOR_WHITE);
+    // Open the utterances file (format: user_input#expected_response per line)
     ifstream file("data/Utterances.txt");
     string line;
 
@@ -261,57 +342,49 @@ bool ChatbotTester::testResponseGeneration()
         return false;
     }
 
-    // Read each line from data/Utterances.txt file
-    while (getline(file, line))
-    {
-        int found = 0;
-        int pos = -1;
+    ChatbotInput inputProcessor;
 
-        // Find position of '#' separator
-        for (int i = 0; i < line.length(); i++)
+    // Read each line from data/Utterances.txt file
+   while (getline(file, line))
+    {   // Find separator index ('#') between input and expected response
+        int pos = -1;
+        for (int i = 0; i < (int)line.length(); i++)
         {
-            if (line[i] == '#')
-            {
-                found = 1;
-                pos = i;
-                break;
-            }
+            if (line[i] == '#') { pos = i; break; }
         }
 
-        // If separator found, process input and expected output
-        if (found == 1)
+         // If a separator exists, extract input and expected response
+        if (pos != -1)
         {
-            string input = "";
-            string expected = "";
+            string input = line.substr(0, pos);  // raw input from file
+            string expected = line.substr(pos + 1);  // expected response from file
 
-            // Extract input part before '#'
-            for (int j = 0; j < pos; j++)
-            {
-                input += line[j];
-            }
+            //validateInput may prompt if input is empty/whitespace;
+            // using it ensures tests use identical preprocessing rules.
+            string tmp = input;
+            string sanitized = inputProcessor.validateInput(tmp);
 
-            // Extract expected output after '#'
-            for (int j = pos + 1; j < line.length(); j++)
-            {
-                expected += line[j];
-            }
-
+            // Generate the chatbot response for the sanitized input
             ChatbotProcessor processor;
-            string response = processor.generateResponse(input);
+            string response = processor.generateResponse(sanitized);
 
-            // Compare actual response with expected response
-            if (response == expected)
-            {
+            // Compare actual response to expected and report result
+            if (response == expected){
+                setColor(COLOR_GREEN);
                 cout << "PASS: " << input << " -> Correct" << endl;
+                setColor(COLOR_WHITE);
             }
-            else
-            {
+                
+            else {
+                setColor(COLOR_RED);
                 cout << "FAIL: " << input << endl;
                 cout << "Expected: " << expected << endl;
                 cout << "Got: " << response << endl;
+                setColor(COLOR_WHITE);
             }
         }
     }
+    // Clean up and indicate success
     file.close();
     return true;
 }
@@ -324,14 +397,19 @@ bool ChatbotTester::validateResponse(const string& input, const string& expected
 
     if (response == expectedOutput)
     {
+        setColor(COLOR_GREEN);
         cout << "PASS: " << input << " -> Correct" << endl;
+        setColor(COLOR_WHITE);
         return true;
     }
     else
     {
+        setColor(COLOR_RED);
         cout << "FAIL: " << input << endl;
+        setColor(COLOR_YELLOW);
         cout << "Expected: " << expectedOutput << endl;
         cout << "Got: " << response << endl;
+        setColor(COLOR_WHITE);
         return false;
     }
 }
@@ -339,8 +417,9 @@ bool ChatbotTester::validateResponse(const string& input, const string& expected
 // Test if Home.txt data is read and parsed correctly
 bool ChatbotTester::testHomeLoanData()
 {
-    cout << "=== Testing Home Loan Data ===" << endl;
-
+    setColor(COLOR_MAGENTA);
+    cout << "\n=== Testing Home Loan Data ===" << endl<< endl;
+    setColor(COLOR_WHITE);
     ifstream file("data/Home.txt");
     string line;
 
@@ -435,19 +514,8 @@ bool ChatbotTester::testHomeLoanData()
 // Print debug messages during testing
 void ChatbotTester::logDebugInfo(const string& debugInfo)
 {
+    setColor(COLOR_MAGENTA);
     cout << "[DEBUG] " << debugInfo << endl;
+    setColor(COLOR_WHITE);
 }
 
-// Run all test functions
-void runAllTests()
-{
-    ChatbotTester tester;
-
-    cout << "Starting Tests..." << endl;
-
-    tester.testInputProcessing();
-    tester.testResponseGeneration();
-    tester.testHomeLoanData();
-
-    cout << "All Tests Completed!" << endl;
-}

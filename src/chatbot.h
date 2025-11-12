@@ -44,7 +44,7 @@ public:
 class ChatbotProcessor {
 public:
     // Process user input and generate appropriate response
-    string generateResponse(const string& input, string filename = "Utterances.txt");
+    string generateResponse(const string& input, string filename = "data/Utterances.txt");
     
     // Analyze input sentiment/intent
     string analyzeIntent(const string& input);

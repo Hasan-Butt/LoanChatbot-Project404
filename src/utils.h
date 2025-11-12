@@ -34,6 +34,8 @@ bool isNumber(const string& str);
 bool isNotEmpty(const string& str);
 int stringToInt(const string& str);
 bool check_spaces(string& input);
+string trimString(string s);
+string toLowerString(string s);
 
 // Range checks
 bool isValidAmount(double amount);
