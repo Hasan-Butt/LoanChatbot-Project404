@@ -36,6 +36,7 @@ int stringToInt(const string& str);
 bool check_spaces(string& input);
 string trimString(string s);
 string toLowerString(string s);
+string removeCommas(string s);
 
 // Range checks
 bool isValidAmount(double amount);

@@ -68,6 +68,14 @@ string toLowerString(string s) {
     }
     return s;
 }
+// Remove commas
+string removeCommas(string s) {
+    string clean = "";
+    for (int i = 0; i < s.length(); i++) {
+        if (s[i] != ',') clean += s[i];
+    }
+    return clean;
+}
 
 //This is what I added to check the spaces 
 bool check_spaces(string& input)

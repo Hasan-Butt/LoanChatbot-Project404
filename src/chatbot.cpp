@@ -78,52 +78,83 @@ int ChatbotInput::extractKeywords(const string& input, string keywords[], int ma
 // LP4-8 Assigned to Kabeer
 
 string ChatbotProcessor::generateResponse(const string& input, string filename) {
-   ifstream file(filename);
-    if (!file.is_open()) {
-        cerr << "Error: Could not open file " << filename << endl;
-        return "";
-    }
+    // ---------------- Persistent State Variables ----------------
+    static string selectedArea = ""; 
+    static bool awaitingInstallmentInput = false;
+    static bool inHomeLoanFlow = false; 
+    static string lastAreaFile = "data/Home.txt";
 
     string target = toLowerString(trimString(input));
-    string wildcardResponse = "";
-    string line;
 
-    while (getline(file, line)) {
-        int pos = line.find('#');
-        if (pos == -1) continue;
-
-        string storedInput = line.substr(0, pos);
-        string response = line.substr(pos + 1);
-
-        string key = toLowerString(trimString(storedInput));
-
-        // check for exact match
-        if (key == target && key != "") {
-            file.close();
-            return trimString(response);
-        }
-
-        // check for wildcard
-        if (key == "*") {
-            wildcardResponse = trimString(response);
-        }
-    }
-
-    file.close();
-
-    // 🏠 Handle area selection for home loan
+    // ---------------- Step 1: Home Loan Area Selection ----------------
     if (input == "1" || input == "2" || input == "3" || input == "4") {
-        ifstream homeFile("data/Home.txt");
+        ifstream homeFile(lastAreaFile);
         if (!homeFile.is_open()) {
             return "Error: Cannot open Home.txt";
         }
 
         string line;
         getline(homeFile, line); // skip header
-        string targetArea = "Area " + input;
-        string result = "\nAvailable Home Loan Options for " + targetArea + ":\n";
+        selectedArea = "Area " + input;
+        string result = "\nAvailable Home Loan Options for " + selectedArea + ":\n";
 
         bool found = false;
+        while (getline(homeFile, line)) {
+            int pos1=-1,pos2=-1,pos3=-1,pos4=-1,count=0;
+            for (int i=0;i<line.length();i++){
+                if (line[i]=='#'){
+                    count++;
+                    if(count==1) pos1=i;
+                    else if(count==2) pos2=i;
+                    else if(count==3) pos3=i;
+                    else if(count==4) pos4=i;
+                }
+            }
+
+            if(pos1!=-1 && pos2!=-1 && pos3!=-1 && pos4!=-1){
+                string area="", size="", inst="", price="", down="";
+                for(int i=0;i<pos1;i++) area+=line[i];
+                for(int i=pos1+1;i<pos2;i++) size+=line[i];
+                for(int i=pos2+1;i<pos3;i++) inst+=line[i];
+                for(int i=pos3+1;i<pos4;i++) price+=line[i];
+                for(int i=pos4+1;i<line.length();i++) down+=line[i];
+
+                if(area==selectedArea){
+                    found = true;
+                    result += "- Size: " + size + 
+                              " | Installments: " + inst + 
+                              " | Price: " + price + 
+                              " | Down Payment: " + down + "\n";
+                }
+            }
+        }
+        homeFile.close();
+
+        if (!found) result += "No options available for " + selectedArea + ".";
+        else result += "\nPlease enter number of installments (e.g. 36, 48, 60):";
+
+        inHomeLoanFlow = true;
+        awaitingInstallmentInput = true;
+        return result;
+    }
+
+    // ---------------- Step 2: Installment Input ----------------
+    if (awaitingInstallmentInput && inHomeLoanFlow) {
+        if (input == "B" || input == "b") {
+            awaitingInstallmentInput = false;
+            inHomeLoanFlow = false;
+            return "You are applying for a home loan. Please select area. Options are 1, 2, 3, 4";
+        }
+
+        ifstream homeFile(lastAreaFile);
+        if (!homeFile.is_open()) {
+            return "Error: Cannot open Home.txt";
+        }
+
+        string line;
+        getline(homeFile, line); // skip header
+        bool found = false;
+        string response = "\nInstallment Plan for " + selectedArea + " (" + input + " months):\n";
 
         while (getline(homeFile, line)) {
             int pos1=-1,pos2=-1,pos3=-1,pos4=-1,count=0;
@@ -145,24 +176,67 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
                 for(int i=pos3+1;i<pos4;i++) price+=line[i];
                 for(int i=pos4+1;i<line.length();i++) down+=line[i];
 
-                if(area==targetArea){
+                if(area==selectedArea && inst==input){
+                    long long priceVal = stoll(removeCommas(price));
+                    long long downVal = stoll(removeCommas(down));
+                    long long months = stoll(inst);
+                    long long monthly = (priceVal - downVal) / months;
+
                     found = true;
-                    result += "- Size: " + size + 
-                              " | Installments: " + inst + 
-                              " | Price: " + price + 
-                              " | Down Payment: " + down + "\n";
+                    response += "- Size: " + size + 
+                                " | Price: " + price + 
+                                " | Down Payment: " + down + 
+                                " | Monthly Installment: " + to_string(monthly) + "\n";
                 }
             }
         }
         homeFile.close();
 
-        if (!found) result += "No options available for " + targetArea + ".";
-        return result;
+        if (!found)
+            response += "No plan found for that installment period.\n";
+        else
+            response += "\nWould you like to check another installment plan (enter number) or go back (B)?";
+
+        awaitingInstallmentInput = true;
+        inHomeLoanFlow = true;
+        return response;
     }
-    if (wildcardResponse != "") return wildcardResponse;
-    return "Sorry, I didn't understand that. Could you please rephrase?";
+
+    // ---------------- Step 3: Generic Response Handling ----------------
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cerr << "Error: Could not open file " << filename << endl;
+        return "";
+    }
+
+    string wildcardResponse = "";
+    string line;
+    while (getline(file, line)) {
+        int pos = line.find('#');
+        if (pos == -1) continue;
+
+        string storedInput = line.substr(0, pos);
+        string response = line.substr(pos + 1);
+        string key = toLowerString(trimString(storedInput));
+
+        if (key == target && key != "") {
+            file.close();
+            return trimString(response);
+        }
+
+        if (key == "*") {
+            wildcardResponse = trimString(response);
+        }
+    }
+    file.close();
+
+    if (wildcardResponse != "")
+        return wildcardResponse;
+
+    return "I'm sorry, I didn't understand that. Please try again.";
 }
-// ...existing code...
+
+
 
 string ChatbotProcessor::analyzeIntent(const string& input) {
     // TODO: Implement intent/sentiment analysis
