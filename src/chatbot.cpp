@@ -19,6 +19,7 @@
 #include <conio.h>
 #include <fstream>
 #include <windows.h>
+#include <iomanip>
 #include <iostream>
 using namespace std;
 
@@ -78,13 +79,28 @@ int ChatbotInput::extractKeywords(const string& input, string keywords[], int ma
 // LP4-8 Assigned to Kabeer
 
 string ChatbotProcessor::generateResponse(const string& input, string filename) {
-    // ---------------- Persistent State Variables ----------------
+  // ---------------- Persistent State Variables ----------------
     static string selectedArea = ""; 
     static bool awaitingInstallmentInput = false;
     static bool inHomeLoanFlow = false; 
     static string lastAreaFile = "data/Home.txt";
 
     string target = toLowerString(trimString(input));
+
+    // ---------------- Check for non-Home loan options first ----------------
+    // If user enters V, C, E, or B (but not in home loan flow)
+    if (!inHomeLoanFlow && (target == "v" || target == "c" || target == "e" || target == "b")) {
+        setColor(14); // Yellow
+        cout << "\n================================================================\n";
+        cout << "                     COMING SOON                                \n";
+        cout << "================================================================\n";
+        setColor(10); // Green
+        cout << "This feature is under development and will be available soon!\n";
+        setColor(8);
+        cout << "================================================================\n";
+        setColor(7);
+        return "This feature is coming soon! Please try Home Loan (H) for now.";
+    }
 
     // ---------------- Step 1: Home Loan Area Selection ----------------
     if (input == "1" || input == "2" || input == "3" || input == "4") {
@@ -97,6 +113,21 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
         getline(homeFile, line); // skip header
         selectedArea = "Area " + input;
         string result = "\nAvailable Home Loan Options for " + selectedArea + ":\n";
+
+        setColor(11); // Cyan
+        cout << "\n================================================================\n";
+        cout << "                  Home Loan Options for " << selectedArea << "\n";
+        cout << "================================================================\n";
+        
+        setColor(14); // Yellow
+        cout << left 
+             << setw(15) << "Size"
+             << setw(18) << "Installments"
+             << setw(22) << "Price"
+             << setw(18) << "Down Payment" << endl;
+
+        setColor(8); // Gray line
+        cout << "---------------------------------------------------------------\n";
 
         bool found = false;
         while (getline(homeFile, line)) {
@@ -121,15 +152,21 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
 
                 if(area==selectedArea){
                     found = true;
-                    result += "- Size: " + size + 
-                              " | Installments: " + inst + 
-                              " | Price: " + price + 
-                              " | Down Payment: " + down + "\n";
+                    setColor(10); // Green rows
+                    cout << left 
+                         << setw(15) << size
+                         << setw(18) << inst
+                         << setw(22) << price
+                         << setw(18) << down << endl;
                 }
             }
         }
         homeFile.close();
 
+        setColor(8);
+        cout << "---------------------------------------------------------------\n";
+
+        setColor(7);
         if (!found) result += "No options available for " + selectedArea + ".";
         else result += "\nPlease enter number of installments (e.g. 36, 48, 60):";
 
@@ -155,6 +192,22 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
         getline(homeFile, line); // skip header
         bool found = false;
         string response = "\nInstallment Plan for " + selectedArea + " (" + input + " months):\n";
+
+        setColor(11);
+        cout << "\n================================================================\n";
+        cout << "            Installment Plan for " << selectedArea 
+             << " (" << input << " months)\n";
+        cout << "================================================================\n";
+
+        setColor(14);
+        cout << left 
+             << setw(15) << "Size"
+             << setw(22) << "Price"
+             << setw(20) << "Down Payment"
+             << setw(20) << "Monthly Installment" << endl;
+
+        setColor(8);
+        cout << "--------------------------------------------------------------------\n";
 
         while (getline(homeFile, line)) {
             int pos1=-1,pos2=-1,pos3=-1,pos4=-1,count=0;
@@ -183,15 +236,21 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
                     long long monthly = (priceVal - downVal) / months;
 
                     found = true;
-                    response += "- Size: " + size + 
-                                " | Price: " + price + 
-                                " | Down Payment: " + down + 
-                                " | Monthly Installment: " + to_string(monthly) + "\n";
+                    setColor(10);
+                    cout << left 
+                         << setw(15) << size
+                         << setw(22) << price
+                         << setw(20) << down
+                         << setw(20) << to_string(monthly) << endl;
                 }
             }
         }
         homeFile.close();
 
+        setColor(8);
+        cout << "--------------------------------------------------------------------\n";
+
+        setColor(7);
         if (!found)
             response += "No plan found for that installment period.\n";
         else
