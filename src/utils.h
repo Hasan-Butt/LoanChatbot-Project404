@@ -15,6 +15,7 @@
 #define UTILS_H
 
 #include <string>
+#include <vector>
 using namespace std;
 
 //Added colors support
@@ -48,5 +49,12 @@ double calculateSimpleInterest(double principal, double rate, double time);
 
 // Logging
 void logInteraction(const string& userInput, const string& botResponse);
+
+ // ===== Implementing Validation and utilities EPIC LP4-22 Assigned to Ayub =====
+// ===== VALIDATION =====
+bool isValidCNIC(const string& cnic);
+bool isValidEmail(const string& email);
+bool isValidPhone(const string& phone);
+bool isValidDate(const string& date);
 
 #endif
