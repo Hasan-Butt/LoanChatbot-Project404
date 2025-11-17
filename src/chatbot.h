@@ -16,13 +16,12 @@
 #define CHATBOT_H
 
 #include <string>
+#include "application.h"
 using namespace std;
 
 // Max number of keywords we can extract
 const int MAX_KEYWORDS = 10;
 
-// Forward declare Application
-struct Application;
 // ----------------------------------Chatbot Input Reading Module--------------------------------
 // LP4-7 Assigned to Ayub
 
