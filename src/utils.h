@@ -56,5 +56,11 @@ bool isValidCNIC(const string& cnic);
 bool isValidEmail(const string& email);
 bool isValidPhone(const string& phone);
 bool isValidDate(const string& date);
+bool isNumeric(const string& str);
+bool isAlpha(const string& str);
+bool isAlphaNumeric(const string& str);
+
+string generateApplicationID();
+string getCurrentDate();
 
 #endif

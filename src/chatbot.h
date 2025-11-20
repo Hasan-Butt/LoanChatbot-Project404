@@ -17,6 +17,7 @@
 
 #include <string>
 #include "application.h"
+#include <vector>
 using namespace std;
 
 // Max number of keywords we can extract
@@ -101,12 +102,7 @@ public:
     string getContextInfo(const string& query);
 
     // ===== EPIC LP4-11 — APPLICATION ASSEMBLY Assigned to Hasan=====
-    void storePersonalInfo(...);   // Combine all user info into application object
-    void storeCNICEmployment(...);
-    void storeFinancialInfo(...);
-    void storeExistingLoanInfo(...);
-    void storeReferenceInfo(...);
-    void storeDocumentPaths(...);
+
 
     // ===== EPIC LP4-17 — INSTALLMENT PLAN GENERATION Assigned to Haider =====
     void generateInstallmentSchedule(
@@ -118,9 +114,6 @@ public:
     string getNextMonth(const string& current);
 
     // ===== EPIC LP4-20 — LENDER SIDE Assigned to Kabeer =====
-    void approveApplication(int index);
-    void rejectApplication(int index);
-    bool updateApplicationStatus(int index, const string& status);
 };
 
 // --------------------------------------Display/Output Module--------------------------------------
@@ -150,6 +143,7 @@ public:
     );
 
     // ===== DISPLAY FOR EPIC LP4-20 Assigned to Kabeer =====
+    void showApplicationSummary(Application &app);
     void showApplicationList();
     void showApplicationDetails(int index);
     void showStatusUpdateResult(bool success);
@@ -176,14 +170,14 @@ public:
     // Writes given array of strings back to a file
     bool writeLinesToFile(const string& filename, string* lines, int count);
 
-    // Generates unique application ID
-    string generateApplicationID();
-
     // Loads all applications from Applications/ directory
     bool loadAllApplications(Application*& apps, int& count);
 
     // Saves the full application details into its folder
-    bool saveApplicationToFile(const string& applicationID);
+    bool saveApplicationToFile(Application app);
+    int countApplicationsByCNIC(const string& cnic, const string& status = "");
+    vector<Application> getApplicationsByCNIC(const string& cnic);
+    Application getApplicationByID(const string& appID);
 };
 
 // --------------------------------------Testing and Debug Module-----------------------------------

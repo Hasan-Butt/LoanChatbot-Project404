@@ -20,6 +20,7 @@
 
 #include "chatbot.h"
 #include <iostream>
+#include "lender_dashboard.h"
 #include <windows.h>
 #include "utils.h"
 
@@ -105,8 +106,11 @@ void ChatbotEventsHandler(){
 }
 
 int main() {
+
     showWelcomeMessage();
     ChatbotEventsHandler();
+    // LenderDashboard dashboard;
+    // dashboard.run();
 
     return 0;
 }

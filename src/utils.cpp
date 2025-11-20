@@ -17,6 +17,8 @@
 #include <cctype>
 #include <fstream>
 #include <windows.h>
+#include <ctime>
+#include <cstdlib>
 using namespace std;
 
 
@@ -112,6 +114,27 @@ bool isValidRate(double rate) {
    
 }
 
+// Generate 4-digit unique application ID
+string generateApplicationID() {
+    srand(time(0));
+    int id = 1000 + (rand() % 9000); // Random 4-digit number
+    return to_string(id);
+}
+
+// Get current date in DD-MM-YYYY format
+string getCurrentDate() {
+    time_t now = time(0);
+    tm* ltm = localtime(&now);
+    
+    string day = to_string(ltm->tm_mday);
+    string month = to_string(1 + ltm->tm_mon);
+    string year = to_string(1900 + ltm->tm_year);
+    
+    if (day.length() == 1) day = "0" + day;
+    if (month.length() == 1) month = "0" + month;
+    
+    return day + "-" + month + "-" + year;
+}
 // =================== Loan Calculations ========================
 
 // Simple interest calculation
@@ -131,3 +154,142 @@ void setColor(int color) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, color);
 }
+
+// ======================== Input Validation ======================
+// Validate CNIC (13 digits, format: XXXXX-XXXXXXX-X)
+bool isValidCNIC(const string& cnic) {
+    // Remove dashes for validation
+    string digits = "";
+    for (int i = 0; i < cnic.length(); i++) {
+        if (cnic[i] >= '0' && cnic[i] <= '9') {
+            digits += cnic[i];
+        }
+        else if (cnic[i] != '-') {
+            return false; // Invalid character
+        }
+    }
+    
+    // Must have exactly 13 digits
+    return digits.length() == 13;
+}
+
+// Validate email format (basic validation)
+bool isValidEmail(const string& email) {
+    int atPos = -1;
+    int dotPos = -1;
+    
+    // Find @ and . positions
+    for (int i = 0; i < email.length(); i++) {
+        if (email[i] == '@') {
+            if (atPos != -1) return false; // Multiple @
+            atPos = i;
+        }
+        if (email[i] == '.' && atPos != -1) {
+            dotPos = i;
+        }
+    }
+    
+    // Check basic format: something@something.something
+    if (atPos <= 0) return false; // No @ or @ at start
+    if (dotPos <= atPos + 1) return false; // No domain
+    if (dotPos >= email.length() - 1) return false; // No extension
+    
+    return true;
+}
+
+// Validate phone number (10-11 digits)
+bool isValidPhone(const string& phone) {
+    string digits = "";
+    
+    for (int i = 0; i < phone.length(); i++) {
+        if (phone[i] >= '0' && phone[i] <= '9') {
+            digits += phone[i];
+        }
+        else if (phone[i] != '-' && phone[i] != ' ' && phone[i] != '+') {
+            return false; // Invalid character
+        }
+    }
+    
+    // Pakistani numbers: 10-11 digits (with or without country code)
+    return (digits.length() >= 10 && digits.length() <= 13);
+}
+
+// Validate date format (DD-MM-YYYY)
+bool isValidDate(const string& date) {
+    if (date.length() != 10) return false;
+    if (date[2] != '-' || date[5] != '-') return false;
+    
+    // Extract day, month, year
+    string dayStr = date.substr(0, 2);
+    string monthStr = date.substr(3, 2);
+    string yearStr = date.substr(6, 4);
+    
+    // Check if all are numeric
+    for (int i = 0; i < 2; i++) {
+        if (dayStr[i] < '0' || dayStr[i] > '9') return false;
+        if (monthStr[i] < '0' || monthStr[i] > '9') return false;
+    }
+    for (int i = 0; i < 4; i++) {
+        if (yearStr[i] < '0' || yearStr[i] > '9') return false;
+    }
+    
+    int day = stoi(dayStr);
+    int month = stoi(monthStr);
+    int year = stoi(yearStr);
+    
+    // Basic range checks
+    if (month < 1 || month > 12) return false;
+    if (day < 1 || day > 31) return false;
+    if (year < 1900 || year > 2100) return false;
+    
+    // Month-specific day validation
+    if (month == 2) {
+        // Leap year check
+        bool isLeap = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+        if (day > (isLeap ? 29 : 28)) return false;
+    }
+    else if (month == 4 || month == 6 || month == 9 || month == 11) {
+        if (day > 30) return false;
+    }
+    
+    return true;
+}
+
+// Check if string contains only digits
+bool isNumeric(const string& str) {
+    if (str.empty()) return false;
+    
+    for (int i = 0; i < str.length(); i++) {
+        if (str[i] < '0' || str[i] > '9') {
+            return false;
+        }
+    }
+    return true;
+}
+
+// Check if string contains only letters
+bool isAlpha(const string& str) {
+    if (str.empty()) return false;
+    
+    for (int i = 0; i < str.length(); i++) {
+        char c = tolower(str[i]);
+        if (c != ' ' && (c < 'a' || c > 'z')) {
+            return false;
+        }
+    }
+    return true;
+}
+
+// Check if string contains only letters and numbers
+bool isAlphaNumeric(const string& str) {
+    if (str.empty()) return false;
+    
+    for (int i = 0; i < str.length(); i++) {
+        char c = tolower(str[i]);
+        if (c != ' ' && (c < 'a' || c > 'z') && (c < '0' || c > '9')) {
+            return false;
+        }
+    }
+    return true;
+}
+

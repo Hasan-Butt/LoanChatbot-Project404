@@ -1,0 +1,42 @@
+ApplicationID:4878
+Status:Pending
+
+FullName:muhammad hasan butt
+FatherName:sarmad butt
+PostalAddress:1234
+ContactNumber:0300-3892752
+Email:hasan2005@gmail.com
+Gender:Male
+MaritalStatus:Single
+Dependents:3
+
+CNIC:35201-1167408-6
+CNICExpiry:12-10-2025
+EmploymentStatus:Unemployed
+
+AnnualIncome:1000000
+AvgBill:100000
+CurrentMonthBill:5000
+
+HasExistingLoan:0
+ExistingLoanAmount:0
+AmountReturned:0
+AmountDue:0
+ExistingLoanBank:N/A
+ExistingLoanCategory:N/A
+
+ReferenceName0:sarim
+ReferenceCNIC0:09876-5432109-8
+ReferenceDate0:10-10-2025
+ReferencePhone0:0321 8892752
+ReferenceEmail0:sarim@gmail.com
+ReferenceName1:ahmed
+ReferenceCNIC1:09876-5432109-8
+ReferenceDate1:12-12-2030
+ReferencePhone1:0987654321
+ReferenceEmail1:cnjacn@email.com
+
+CNICFrontPath:data
+CNICBackPath:data
+ElectricityBillPath:data
+SalarySlipPath:data
