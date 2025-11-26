@@ -21,9 +21,14 @@
 #include <windows.h>
 #include <iomanip>
 #include "application.h"
+#include "general_conversation.h"
 #include <vector>
 #include <iostream>
 using namespace std;
+
+// Global conversation corpus - loaded once and reused
+static vector<ConversationPair> conversationCorpus;
+static bool corpusLoaded = false;
 
 vector<string> parseLine(const string& line, char delimiter) {
     vector<string> fields;
@@ -1175,6 +1180,58 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
     }
 
     // ---------------- Generic Response Handling ----------------
+
+    // -------------------- General Conversation Mode --------------------
+    // Trigger conversation mode for greetings or chat requests
+    // This needs to be BEFORE the generic file-based response handling
+    
+    // Check if user is trying to have a general conversation
+    bool isConversationTrigger = false;
+    
+    // Check for conversation keywords
+    if (target.find("chat") != string::npos || 
+        target.find("talk") != string::npos ||
+        target.find("conversation") != string::npos ||
+        target == "hi" || target == "hello" || target == "hey" ||
+        target == "sup" || target == "wassup" || target == "how are you" ||
+        target == "hows it going" || target == "whats up") {
+        isConversationTrigger = true;
+    }
+    
+    // Also check if we're NOT in any loan flow and input doesn't match loan keywords
+    if (!awaitingSelection && !awaitingInstallmentInput && !askToApply) {
+        // If input doesn't look like a loan command, try conversation
+        if (target != "a" && target != "h" && target != "c" && 
+            target != "s" && target != "p" && target != "x" &&
+            target.find("application") == string::npos &&
+            target.find("monthly plan") == string::npos &&
+            target.find("payment plan") == string::npos) {
+            isConversationTrigger = true;
+        }
+    }
+    
+    if (isConversationTrigger) {
+        // Load corpus on first use (only once for efficiency)
+        if (!corpusLoaded) {
+            setColor(COLOR_YELLOW);
+            cout << "\n[Loading conversation database...";
+            conversationCorpus = loadConversationCorpus("data/human_chat_corpus.txt");
+            cout << " Done!]\n";
+            setColor(COLOR_WHITE);
+            corpusLoaded = true;
+        }
+        
+        // Find best matching response using IoU
+        string response = findBestMatchFromCorpus(target, conversationCorpus);
+        
+        // Visual indicator that we're in conversation mode
+        setColor(COLOR_GREEN);
+        cout << "[💬 Conversation Mode] ";
+        setColor(COLOR_WHITE);
+        
+        return response;
+    }
+
     ifstream file(filename);
     if (!file.is_open()) {
         cerr << "Error: Could not open file " << filename << endl;

@@ -106,11 +106,12 @@ void ChatbotEventsHandler(){
 }
 
 int main() {
-
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
     showWelcomeMessage();
     ChatbotEventsHandler();
-    // LenderDashboard dashboard;
-    // dashboard.run();
+    //  LenderDashboard dashboard;
+    //  dashboard.run();
 
     return 0;
 }
