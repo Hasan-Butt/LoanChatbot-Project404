@@ -537,7 +537,7 @@ string ChatbotInput::getSalarySlipPath() {
 
 // LP4-25 - Fixed generateMonthlyPlan function
 void generateMonthlyPlan(long long loanAmount, long long downPayment, int months, string startMonth, int startYear) {
-    // Fix: Add validation for months to prevent divide-by-zero
+   // Add validation for months to prevent divide-by-zero
     if (months <= 0) {
         setColor(COLOR_RED);
         cout << "Error: Number of installments must be greater than 0.\n";
@@ -582,7 +582,7 @@ void generateMonthlyPlan(long long loanAmount, long long downPayment, int months
         << setw(20) << "Total Paid"
         << setw(20) << "Remaining" << "\n";
     setColor(COLOR_CYAN);
-    cout << "------------------------------------------------------------\n";
+    cout << "--------------------------------------------------------------------\n";
         setColor(COLOR_WHITE);
 
     for (int i = 1; i <= months; i++) {
@@ -605,7 +605,7 @@ void generateMonthlyPlan(long long loanAmount, long long downPayment, int months
     }
 
     setColor(COLOR_CYAN);
-    cout << "============================================================\n";
+    cout << "====================================================================\n";
     setColor(COLOR_WHITE);
 }
 
@@ -1077,14 +1077,120 @@ string resumeApplication() {
 // LP4-8 Assigned to Kabeer
 
 string ChatbotProcessor::generateResponse(const string& input, string filename) {
-    static string selectedLoanType = ""; // "home", "car", or "scooter"
+   static string selectedLoanType = ""; // "home", "car", or "scooter"
     static string selectedOption = "";   // stores selected make/model/area
     static bool awaitingInstallmentInput = false;
     static bool awaitingSelection = false;
     static string currentDataFile = "";
     static bool askToApply = false;
+    static bool awaitingConversationConfirmation = false;
+    static string pendingConversationInput = "";
+    static bool inConversationMode = false;  // NEW: Track if we're in conversation mode
 
     string target = toLowerString(trimString(input));
+
+    // ----------------Handle conversation mode confirmation ----------------
+    if (awaitingConversationConfirmation) {
+        string low = toLowerString(target);
+        if (low == "yes" || low == "y") {
+            awaitingConversationConfirmation = false;
+            inConversationMode = true;  // Enable conversation mode
+            
+            // Load corpus on first use
+            if (!corpusLoaded) {
+                setColor(COLOR_YELLOW);
+                cout << "\n[Loading conversation database...";
+                conversationCorpus = loadConversationCorpus("data/human_chat_corpus.txt");
+                cout << " Done!]\n";
+                setColor(COLOR_WHITE);
+                corpusLoaded = true;
+            }
+            
+            // Find best matching response using IoU for the ORIGINAL input
+            string response = findBestMatchFromCorpus(pendingConversationInput, conversationCorpus);
+            
+            // Visual indicator that we're in conversation mode
+            setColor(COLOR_GREEN);
+            cout << "\n[💬 Conversation Mode - Type 'exit conversation' or use loan commands to return]\n";
+            setColor(COLOR_WHITE);
+            
+            pendingConversationInput = ""; // Clear pending input
+            return response;
+        }
+        else if (low == "no" || low == "n") {
+            awaitingConversationConfirmation = false;
+            pendingConversationInput = "";
+            
+            // Return wildcard response from file
+            ifstream file(filename);
+            if (file.is_open()) {
+                string line;
+                while (getline(file, line)) {
+                    int pos = line.find('#');
+                    if (pos == -1) continue;
+                    
+                    string storedInput = line.substr(0, pos);
+                    string response = line.substr(pos + 1);
+                    string key = toLowerString(trimString(storedInput));
+                    
+                    if (key == "*") {
+                        file.close();
+                        return trimString(response);
+                    }
+                }
+                file.close();
+            }
+            
+            return "I'm sorry, I didn't understand that. Please try again.";
+        }
+        else {
+            return "Please enter YES to start conversation mode, or NO for standard response.";
+        }
+    }
+
+    // ----------------Check if user wants to exit conversation mode ----------------
+    if (inConversationMode) {
+        // Check for exit commands
+        if (target.find("exit conversation") != string::npos || 
+            target.find("quit chat") != string::npos ||
+            target.find("stop chatting") != string::npos ||
+            target.find("leave conversation") != string::npos ||
+            target == "exit" || target == "quit" || target == "stop") {
+            inConversationMode = false;
+            setColor(COLOR_YELLOW);
+            cout << "\n[Exiting Conversation Mode - Returning to Loan Services]\n";
+            setColor(COLOR_WHITE);
+            return "You've exited conversation mode. How can I help you with loan services?";
+        }
+        
+        // Check for loan-related commands to auto-exit conversation mode
+        if (target == "h" || target == "c" || target == "s" || target == "a" ||
+            target.find("home loan") != string::npos ||
+            target.find("car loan") != string::npos ||
+            target.find("scooter loan") != string::npos ||
+            target.find("application") != string::npos ||
+            target.find("monthly plan") != string::npos ||
+            target.find("payment plan") != string::npos ||
+            target.find("resume") != string::npos ||
+            target.find("continue") != string::npos) {
+            
+            inConversationMode = false;
+            setColor(COLOR_YELLOW);
+            cout << "\n[Auto-exiting Conversation Mode - Processing loan request]\n";
+            setColor(COLOR_WHITE);
+            // Continue processing below (don't return yet)
+        }
+        else {
+            // Stay in conversation mode - process input
+            string response = findBestMatchFromCorpus(target, conversationCorpus);
+            
+            setColor(COLOR_GREEN);
+            cout << "[💬 Conversation Mode] ";
+            setColor(COLOR_WHITE);
+            
+            return response;
+        }
+    }
 
     // ----------------Handle loan application response ----------------
     if (askToApply) {
@@ -1103,7 +1209,6 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
             selectedLoanType = "";
             return "Okay! You can select a different loan type from the main menu.";
         }
-
         else {
             return "Please enter YES to apply, or NO to go back.";
         }
@@ -1132,7 +1237,6 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
         cout << "================================================================\n";
 
         if (selectedLoanType == "home") {
-
             setColor(14);
             cout << left << setw(15) << "Size"
                 << setw(22) << "Price"
@@ -1164,7 +1268,6 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
                             << setw(20) << to_string(monthly) << endl;
                     }
                 }
-
             }
         }
         else if (selectedLoanType == "car") {
@@ -1197,7 +1300,6 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
                         long long months = stoll(inst);
                         long long monthly = (priceVal - downVal) / months;
 
-
                         found = true;
                         setColor(10);
                         cout << left << setw(15) << model
@@ -1228,7 +1330,6 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
                 if (fields.size() >= 8) {
                     string make = fields[0];
                     string model = fields[1];
-
                     string distance = fields[2];
                     string charging = fields[3];
                     string speed = fields[4];
@@ -1261,7 +1362,6 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
         cout << "--------------------------------------------------------------------\n";
         setColor(7);
 
-
         if (!found) {
             return "No plan found for that installment period. Try again or 'B' to go back.";
         }
@@ -1292,10 +1392,8 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
         // Convert input to proper format based on loan type
         if (selectedLoanType == "home") {
             selectedOption = "Area " + input;
-
         }
         else if (selectedLoanType == "car" || selectedLoanType == "scooter") {
-            // Convert "1" -> "Make 1", "2" -> "Make 2"
             selectedOption = "Make " + input;
         }
         else {
@@ -1319,7 +1417,6 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
             bool found = false;
             while (getline(file, line)) {
                 vector<string> fields = parseLine(line, '#');
-
                 if (fields.size() >= 5 && fields[0] == selectedOption) {
                     found = true;
                     setColor(10);
@@ -1351,7 +1448,6 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
                 << setw(8) << "Year"
                 << setw(18) << "Installments"
                 << setw(20) << "Price"
-
                 << setw(18) << "Down" << endl;
             setColor(8);
             cout << "---------------------------------------------------------------\n";
@@ -1382,7 +1478,6 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
                 return "No options available. Please try again.";
             }
             awaitingInstallmentInput = true;
-
             awaitingSelection = false;
             return "\nEnter number of installments (e.g. 48, 60):";
         }
@@ -1443,7 +1538,6 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
         return "You are applying for a car loan. Please select make (Make 1, Make 2):";
     }
     else if (target == "s") {
-
         selectedLoanType = "scooter";
         currentDataFile = "data/Scooter.txt";
         awaitingSelection = true;
@@ -1465,11 +1559,7 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
         return resumeApplication();
     }
 
-    // ---------------------Generic Response Handling --------------------
-    // -------------------- General Conversation Mode --------------------
-    // Trigger conversation mode for greetings or chat requests
-    // This needs to be BEFORE the generic file-based response handling
-    
+    // -------------------- General Conversation Mode with Confirmation --------------------
     // Check if user is trying to have a general conversation
     bool isConversationTrigger = false;
     
@@ -1495,28 +1585,51 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
         }
     }
     
-    if (isConversationTrigger) {
-        // Load corpus on first use (only once for efficiency)
-        if (!corpusLoaded) {
-            setColor(COLOR_YELLOW);
-            cout << "\n[Loading conversation database...";
-            conversationCorpus = loadConversationCorpus("data/human_chat_corpus.txt");
-            cout << " Done!]\n";
-            setColor(COLOR_WHITE);
-            corpusLoaded = true;
+    // NEW: Prompt user before entering conversation mode
+    if (isConversationTrigger && !inConversationMode) {  // Only prompt if not already in conversation mode
+        // First check if there's an exact match in the knowledge base
+        ifstream file(filename);
+        bool foundExactMatch = false;
+        
+        if (file.is_open()) {
+            string line;
+            while (getline(file, line)) {
+                int pos = line.find('#');
+                if (pos == -1) continue;
+                
+                string storedInput = line.substr(0, pos);
+                string key = toLowerString(trimString(storedInput));
+                
+                if (key == target && key != "" && key != "*") {
+                    foundExactMatch = true;
+                    string response = line.substr(pos + 1);
+                    file.close();
+                    return trimString(response);
+                }
+            }
+            file.close();
         }
         
-        // Find best matching response using IoU
-        string response = findBestMatchFromCorpus(target, conversationCorpus);
-        
-        // Visual indicator that we're in conversation mode
-        setColor(COLOR_GREEN);
-        cout << "[💬 Conversation Mode] ";
-        setColor(COLOR_WHITE);
-        
-        return response;
+        // If no exact match, prompt for conversation mode
+        if (!foundExactMatch) {
+            awaitingConversationConfirmation = true;
+            pendingConversationInput = target;
+            
+            setColor(COLOR_YELLOW);
+            string prompt = "\n╔════════════════════════════════════════════════════════════╗\n";
+            prompt +=         "║  🤖   Your input matches general conversation.             ║\n";
+            prompt +=         "║                                                            ║\n";
+            prompt +=         "║  Would you like to enter Conversation Mode?                ║\n";
+            prompt +=         "║  (You can chat casually until you use loan commands)       ║\n";
+            prompt +=         "╚════════════════════════════════════════════════════════════╝\n";
+            prompt += "\n👉 Enter YES to chat, or NO for standard response: ";
+            setColor(COLOR_WHITE);
+            
+            return prompt;
+        }
     }
 
+    // ---------------------Generic Response Handling --------------------
     ifstream file(filename);
     if (!file.is_open()) {
         cerr << "Error: Could not open file " << filename << endl;
@@ -1550,20 +1663,6 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
     return "I'm sorry, I didn't understand that. Please try again.";
 }
 
-
-
-string ChatbotProcessor::analyzeIntent(const string& input) {
-    // TODO: Implement intent/sentiment analysis
-}
-
-
-string ChatbotProcessor::processLoanQuery(const string keywords[], int keywordCount) {
-    // TODO: Implement loan query handling
-}
-
-string ChatbotProcessor::getContextInfo(const string& query) {
-    // TODO: Implement context retrieval
-}
 
 // --------------------------------------Display/Output Module--------------------------------------
 // LP4-9 Assigned to Hasan

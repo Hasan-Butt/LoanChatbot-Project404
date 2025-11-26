@@ -130,8 +130,6 @@ vector<ConversationPair> loadConversationCorpus(const string& filename) {
     }
     
     file.close();
-    
-    cout << "[Loaded " << corpus.size() << " conversation pairs]\n";
     return corpus;
 }
 

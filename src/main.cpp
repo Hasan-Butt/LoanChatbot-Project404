@@ -48,7 +48,7 @@ void runAllTests()
 
     setColor(COLOR_BLUE);
     cout << "\nAll Tests Completed!" << endl<<endl;
-     setColor(COLOR_WHITE);
+    setColor(COLOR_WHITE);
 }
 
 //Main Chatbot Loop that Handles continuous flow 
@@ -82,7 +82,7 @@ void ChatbotEventsHandler(){
         string user = input.readUserInput();
 
         // exit command
-        if (user == "exit" || user == "quit") {
+        if (user == "X" || user == "exit") {
             cout << "\nExiting LoanMate. Goodbye!\n";
             break;
         }
@@ -110,8 +110,8 @@ int main() {
     SetConsoleCP(CP_UTF8);
     showWelcomeMessage();
     ChatbotEventsHandler();
-    //  LenderDashboard dashboard;
-    //  dashboard.run();
+    // LenderDashboard dashboard;
+    // dashboard.run();
 
     return 0;
 }

@@ -91,18 +91,6 @@ class ChatbotProcessor {
 public:
     // Process user input and generate appropriate response
     string generateResponse(const string& input, string filename = "data/Utterances.txt");
-    
-    // Analyze input sentiment/intent
-    string analyzeIntent(const string& input);
-    
-    // Handle loan-related queries
-    string processLoanQuery(const string keywords[], int keywordCount);
-    
-    // Get contextual information for response
-    string getContextInfo(const string& query);
-
-    // ===== EPIC LP4-11 — APPLICATION ASSEMBLY Assigned to Hasan=====
-
 
     // ===== EPIC LP4-17 — INSTALLMENT PLAN GENERATION Assigned to Haider =====
     void generateInstallmentSchedule(
@@ -112,8 +100,6 @@ public:
         const string& startMonth
     );
     string getNextMonth(const string& current);
-
-    // ===== EPIC LP4-20 — LENDER SIDE Assigned to Kabeer =====
 };
 
 // --------------------------------------Display/Output Module--------------------------------------
@@ -132,22 +118,8 @@ public:
     // Format and style output text
     string formatOutput(const string& text);
 
-    // ===== DISPLAY FOR EPIC LP4-17 Assigned to Haider =====
-    void showCNICSearchSummary(int submitted, int approved, int rejected);
-    void showInstallmentTable(
-        int installmentNo,
-        const string& month,
-        long long monthlyPayment,
-        long long totalPaid,
-        long long remaining
-    );
-
     // ===== DISPLAY FOR EPIC LP4-20 Assigned to Kabeer =====
     void showApplicationSummary(Application &app);
-    void showApplicationList();
-    void showApplicationDetails(int index);
-    void showStatusUpdateResult(bool success);
-    void viewApplication(int index);
 
 };
 
@@ -155,24 +127,6 @@ public:
 // ===== File and Folder Utilities EPIC LP4-22 Assigned to Ayub =====
 class ChatbotStorage {
 public:
-
-    
-    // Creates "Applications/<appID>/" folder if not present
-    bool createApplicantFolder(const string& appID);
-
-    // Appends a single line of text to a file
-    bool appendLineToFile(const string& filename, const string& data);
-
-    // Reads all lines from a file into a dynamic array
-    // lines -> dynamically allocated array of strings
-    bool readFileLines(const string& filename, string*& lines, int& count);
-
-    // Writes given array of strings back to a file
-    bool writeLinesToFile(const string& filename, string* lines, int count);
-
-    // Loads all applications from Applications/ directory
-    bool loadAllApplications(Application*& apps, int& count);
-
     // Saves the full application details into its folder
     bool saveApplicationToFile(Application app);
     int countApplicationsByCNIC(const string& cnic, const string& status = "");
@@ -198,22 +152,6 @@ public:
     
     // Log debug information
     void logDebugInfo(const string& debugInfo);
-
-    // ===== Testing of EPIC- LP4-11 Assigned to Hasan =====
-   
-    void testPersonalInfoCollection();
-    void testCNICEmploymentCollection();
-    void testFinancialInfoCollection();
-    void testExistingLoanCollection();
-    void testReferenceCollection();
-    void testDocumentPathCollection();
-
-   // ===== Testing of EPIC- LP4-17 Assigned to Haider =====
-    void testCNICSearch();
-    void testInstallmentSchedule();
-
-    // ===== Testing of EPIC- LP4-20 Assigned to Kabeer =====
-    void testLenderViewAndUpdate();
 };
 
 #endif
