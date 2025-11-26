@@ -1,3 +1,4 @@
+
 /*
  * chatbot.cpp
  *
@@ -25,6 +26,7 @@
 #include <iostream>
 using namespace std;
 
+
 vector<string> parseLine(const string& line, char delimiter) {
     vector<string> fields;
     string field = "";
@@ -32,7 +34,8 @@ vector<string> parseLine(const string& line, char delimiter) {
         if (line[i] == delimiter) {
             fields.push_back(field);
             field = "";
-        } else {
+        }
+        else {
             field += line[i];
         }
     }
@@ -54,6 +57,7 @@ string ChatbotInput::readUserInput()
 
 string ChatbotInput::validateInput(string& input) {
     // TODO: Implement input validation
+
     while (check_spaces(input) || input == "") // only spaces or empty string
     {
         if (check_spaces(input))
@@ -81,6 +85,7 @@ string ChatbotInput::validateInput(string& input) {
     while (i < input.length())
     {
         char c = input[i];
+
         c = tolower(c);
         input[i] = c;
         i++;
@@ -101,11 +106,11 @@ string ChatbotInput::getFullName() {
     while (true) {
         cout << "Enter Full Name: ";
         name = readUserInput();
-        
+
         if (isAlpha(name) && name.length() >= 3) {
             return name;
         }
-        
+
         setColor(COLOR_RED);
         cout << "Invalid name! Name should contain only letters and be at least 3 characters.\n";
         setColor(COLOR_WHITE);
@@ -113,16 +118,17 @@ string ChatbotInput::getFullName() {
 }
 
 
+
 string ChatbotInput::getFatherName() {
     string name;
     while (true) {
         cout << "Enter Father's Name: ";
         name = readUserInput();
-        
+
         if (isAlpha(name) && name.length() >= 3) {
             return name;
         }
-        
+
         setColor(COLOR_RED);
         cout << "Invalid name! Name should contain only letters and be at least 3 characters.\n";
         setColor(COLOR_WHITE);
@@ -140,11 +146,12 @@ string ChatbotInput::getContactNumber() {
     while (true) {
         cout << "Enter Contact Number (10-11 digits): ";
         phone = readUserInput();
-        
+
         if (isValidPhone(phone)) {
+
             return phone;
         }
-        
+
         setColor(COLOR_RED);
         cout << "Invalid phone number! Please enter 10-11 digits.\n";
         setColor(COLOR_WHITE);
@@ -156,11 +163,11 @@ string ChatbotInput::getEmail() {
     while (true) {
         cout << "Enter Email Address: ";
         email = readUserInput();
-        
+
         if (isValidEmail(email)) {
             return email;
         }
-        
+
         setColor(COLOR_RED);
         cout << "Invalid email format! Please enter a valid email (e.g., user@example.com).\n";
         setColor(COLOR_WHITE);
@@ -172,7 +179,7 @@ string ChatbotInput::getGender() {
     while (true) {
         cout << "Enter Gender (Male/Female/Other): ";
         gender = readUserInput();
-        
+
         string lower = toLowerString(gender);
         if (lower == "male" || lower == "female" || lower == "other" || lower == "m" || lower == "f") {
             if (lower == "m") return "Male";
@@ -181,7 +188,7 @@ string ChatbotInput::getGender() {
             gender[0] = toupper(gender[0]);
             return gender;
         }
-        
+
         setColor(COLOR_RED);
         cout << "Invalid gender! Please enter Male, Female, or Other.\n";
         setColor(COLOR_WHITE);
@@ -193,19 +200,20 @@ string ChatbotInput::getMaritalStatus() {
     while (true) {
         cout << "Enter Marital Status (Single/Married/Divorced/Widowed): ";
         status = readUserInput();
-        
+
         string lower = toLowerString(status);
-        if (lower == "single" || lower == "married" || lower == "divorced" || lower == "widowed" || 
+        if (lower == "single" || lower == "married" || lower == "divorced" || lower == "widowed" ||
             lower == "s" || lower == "m" || lower == "d" || lower == "w") {
             if (lower == "s") return "Single";
             if (lower == "m") return "Married";
             if (lower == "d") return "Divorced";
             if (lower == "w") return "Widowed";
             // Capitalize first letter
+
             status[0] = toupper(status[0]);
             return status;
         }
-        
+
         setColor(COLOR_RED);
         cout << "Invalid status! Please enter Single, Married, Divorced, or Widowed.\n";
         setColor(COLOR_WHITE);
@@ -217,7 +225,7 @@ int ChatbotInput::getDependents() {
         cout << "Enter Number of Dependents (0-20): ";
         int d;
         cin >> d;
-        
+
         if (cin.fail() || d < 0 || d > 20) {
             cin.clear();
             cin.ignore(10000, '\n');
@@ -241,7 +249,7 @@ string ChatbotInput::getCNIC() {
     while (true) {
         cout << "Enter CNIC (13 digits, format: XXXXX-XXXXXXX-X or XXXXXXXXXXXXX): ";
         cnic = readUserInput();
-        
+
         if (isValidCNIC(cnic)) {
             // Format it properly if needed
             string digits = "";
@@ -255,7 +263,7 @@ string ChatbotInput::getCNIC() {
                 return digits.substr(0, 5) + "-" + digits.substr(5, 7) + "-" + digits.substr(12, 1);
             }
         }
-        
+
         setColor(COLOR_RED);
         cout << "Invalid CNIC! Please enter exactly 13 digits.\n";
         setColor(COLOR_WHITE);
@@ -267,11 +275,11 @@ string ChatbotInput::getCNICExpiry() {
     while (true) {
         cout << "Enter CNIC Expiry Date (DD-MM-YYYY): ";
         date = readUserInput();
-        
+
         if (isValidDate(date)) {
             return date;
         }
-        
+
         setColor(COLOR_RED);
         cout << "Invalid date format! Please use DD-MM-YYYY (e.g., 25-12-2030).\n";
         setColor(COLOR_WHITE);
@@ -284,18 +292,19 @@ string ChatbotInput::getEmploymentStatus() {
         cout << "Select Employment Status:\n";
         cout << "1. Salaried\n2. Business\n3. Self-Employed\n4. Unemployed\n> ";
         status = readUserInput();
-        
+
         if (status == "1") return "Salaried";
         if (status == "2") return "Business";
         if (status == "3") return "Self-Employed";
         if (status == "4") return "Unemployed";
-        
+
         string lower = toLowerString(status);
         if (lower == "salaried") return "Salaried";
+
         if (lower == "business") return "Business";
         if (lower == "self-employed" || lower == "self employed") return "Self-Employed";
         if (lower == "unemployed") return "Unemployed";
-        
+
         setColor(COLOR_RED);
         cout << "Invalid selection! Please enter 1, 2, 3, or 4.\n";
         setColor(COLOR_WHITE);
@@ -312,7 +321,7 @@ long long ChatbotInput::getAnnualIncome() {
         cout << "Enter Annual Income (PKR): ";
         long long x;
         cin >> x;
-        
+
         if (cin.fail() || x < 0 || x > 999999999999LL) {
             cin.clear();
             cin.ignore(10000, '\n');
@@ -322,6 +331,7 @@ long long ChatbotInput::getAnnualIncome() {
         }
         else {
             cin.ignore();
+
             return x;
         }
     }
@@ -332,7 +342,7 @@ long long ChatbotInput::getAvgBill() {
         cout << "Enter Average Electricity Bill (Last 12 months, PKR): ";
         long long x;
         cin >> x;
-        
+
         if (cin.fail() || x < 0 || x > 1000000) {
             cin.clear();
             cin.ignore(10000, '\n');
@@ -352,7 +362,7 @@ long long ChatbotInput::getCurrentMonthBill() {
         cout << "Enter Current Month's Electricity Bill (PKR): ";
         long long x;
         cin >> x;
-        
+
         if (cin.fail() || x < 0 || x > 1000000) {
             cin.clear();
             cin.ignore(10000, '\n');
@@ -384,6 +394,7 @@ long long ChatbotInput::getExistingLoanAmount() {
     cin >> x;
     cin.ignore();
     return x;
+
 }
 
 long long ChatbotInput::getAmountReturned() {
@@ -426,7 +437,7 @@ string ChatbotInput::getReferenceCNIC(int refIndex) {
     while (true) {
         cout << "Enter Reference " << refIndex << " CNIC: ";
         cnic = readUserInput();
-        
+
         if (isValidCNIC(cnic)) {
             // Format it properly
             string digits = "";
@@ -439,7 +450,7 @@ string ChatbotInput::getReferenceCNIC(int refIndex) {
                 return digits.substr(0, 5) + "-" + digits.substr(5, 7) + "-" + digits.substr(12, 1);
             }
         }
-        
+
         setColor(COLOR_RED);
         cout << "Invalid CNIC! Please enter exactly 13 digits.\n";
         setColor(COLOR_WHITE);
@@ -447,15 +458,16 @@ string ChatbotInput::getReferenceCNIC(int refIndex) {
 }
 
 string ChatbotInput::getReferenceDate(int refIndex) {
+
     string date;
     while (true) {
         cout << "Enter Reference " << refIndex << " Date (DD-MM-YYYY): ";
         date = readUserInput();
-        
+
         if (isValidDate(date)) {
             return date;
         }
-        
+
         setColor(COLOR_RED);
         cout << "Invalid date format! Please use DD-MM-YYYY.\n";
         setColor(COLOR_WHITE);
@@ -467,11 +479,11 @@ string ChatbotInput::getReferencePhone(int refIndex) {
     while (true) {
         cout << "Enter Reference " << refIndex << " Phone: ";
         phone = readUserInput();
-        
+
         if (isValidPhone(phone)) {
             return phone;
         }
-        
+
         setColor(COLOR_RED);
         cout << "Invalid phone number! Please enter 10-11 digits.\n";
         setColor(COLOR_WHITE);
@@ -483,11 +495,11 @@ string ChatbotInput::getReferenceEmail(int refIndex) {
     while (true) {
         cout << "Enter Reference " << refIndex << " Email: ";
         email = readUserInput();
-        
+
         if (isValidEmail(email)) {
             return email;
         }
-        
+
         setColor(COLOR_RED);
         cout << "Invalid email format!\n";
         setColor(COLOR_WHITE);
@@ -510,6 +522,7 @@ string ChatbotInput::getCNICBackPath() {
 
 string ChatbotInput::getElectricityBillPath() {
     cout << "Enter Electricity Bill Image Path: ";
+
     return readUserInput();
 }
 
@@ -518,38 +531,277 @@ string ChatbotInput::getSalarySlipPath() {
     return readUserInput();
 }
 
+// LP4-25 - Fixed generateMonthlyPlan function
+void generateMonthlyPlan(long long loanAmount, long long downPayment, int months, string startMonth, int startYear) {
+    // Fix: Add validation for months to prevent divide-by-zero
+    if (months <= 0) {
+        setColor(COLOR_RED);
+        cout << "Error: Number of installments must be greater than 0.\n";
+        setColor(COLOR_WHITE);
+        return;
+    }
+
+    long long principal = loanAmount - downPayment;
+    long long monthlyPayment = principal / months;
+    long long remaining = principal;
+
+    string monthNames[] = { "January", "February", "March", "April", "May", "June",
+                          "July", "August", "September", "October", "November", "December" };
+
+    int currentMonth = 0;
+    // Convert startMonth to index
+    for (int i = 0; i < 12; i++) {
+
+        if (toLowerString(startMonth) == toLowerString(monthNames[i])) {
+            currentMonth = i;
+            break;
+        }
+    }
+
+    int currentYear = startYear;
+
+    setColor(COLOR_CYAN);
+    cout << "\n============================================================\n";
+    cout << "               MONTHLY PAYMENT PLAN                         \n";
+    cout << "============================================================\n";
+    setColor(COLOR_WHITE);
+
+    cout << "Loan Amount:     " << loanAmount << "\n";
+    cout << "Down Payment:    " << downPayment << "\n";
+    cout << "Principal:       " << principal << "\n";
+    cout << "Installments:    " << months << " months\n";
+    cout << "Monthly Payment: " << monthlyPayment << "\n\n";
+
+    setColor(COLOR_YELLOW);
+    cout << left << setw(20) << "Month"
+        << setw(20) << "Payment"
+        << setw(20) << "Total Paid"
+        << setw(20) << "Remaining" << "\n";
+    setColor(COLOR_CYAN);
+    cout << "------------------------------------------------------------
+
+        \n";
+        setColor(COLOR_WHITE);
+
+    for (int i = 1; i <= months; i++) {
+        long long paid = monthlyPayment * i;
+        remaining = principal - paid;
+        if (remaining < 0) remaining = 0;
+
+        string monthYear = monthNames[currentMonth] + " " + to_string(currentYear);
+
+        cout << left << setw(20) << monthYear
+            << setw(20) << monthlyPayment
+            << setw(20) << paid
+            << setw(20) << remaining << "\n";
+
+        currentMonth++;
+        if (currentMonth >= 12) {
+            currentMonth = 0;
+            currentYear++;
+        }
+    }
+
+    setColor(COLOR_CYAN);
+    cout << "============================================================\n";
+    setColor(COLOR_WHITE);
+}
+
+bool QueryApplication(string target) {
+    if (target.find("my applications") != string::npos ||
+
+        target.find("application status") != string::npos ||
+        target.find("check application") != string::npos) {
+
+        cout << "Enter your CNIC (13 digits): ";
+        ChatbotInput input;
+        string cnic = input.readUserInput();
+
+        ChatbotStorage storage;
+        int total = storage.countApplicationsByCNIC(cnic);
+        int pending = storage.countApplicationsByCNIC(cnic, "Pending");
+        int approved = storage.countApplicationsByCNIC(cnic, "Approved");
+        int rejected = storage.countApplicationsByCNIC(cnic, "Rejected");
+
+        setColor(COLOR_CYAN);
+        cout << "\n========================================\n";
+        cout << "   APPLICATION STATUS FOR CNIC: " << cnic << "\n";
+        cout << "========================================\n";
+        setColor(COLOR_WHITE);
+
+        cout << "Total Applications:    " << total << "\n";
+        setColor(COLOR_YELLOW);
+        cout << "Pending Applications:  " << pending << "\n";
+        setColor(COLOR_GREEN);
+        cout << "Approved Applications: " << approved << "\n";
+        setColor(COLOR_RED);
+        cout << "Rejected Applications: " << rejected << "\n";
+        setColor(COLOR_WHITE);
+
+        cout << "\n========================================\n";
+        return true;
+    }
+    return false;
+}
+
+string viewMonthlyPlan(string target) {
+    if (target.find("monthly plan") != string::npos ||
+        target.find("payment plan") != string::npos ||
+        target.find("installment plan") != string::npos) {
+
+        cout << "Enter your Application ID: ";
+        ChatbotInput input;
+        string appID = input.readUserInput();
+
+        ChatbotStorage storage;
+        Application app = storage.getApplicationByID(appID);
+
+        if (app.applicationID.empty()) {
+            return "Application not found. Please check the ID and try again.";
+        }
+
+        if (app.status != "Approved") {
+            return "This application is not approved yet. Status: " + app.status;
+        }
+
+        // Ask for loan details
+        cout << "Enter Loan Amount: ";
+        long long loanAmount;
+
+        cin >> loanAmount;
+        cin.ignore();
+
+        cout << "Enter Down Payment: ";
+        long long downPayment;
+        cin >> downPayment;
+        cin.ignore();
+
+        cout << "Enter Number of Installments: ";
+        int months;
+        cin >> months;
+        cin.ignore();
+
+        cout << "Enter Starting Month (e.g., January): ";
+        string startMonth = input.readUserInput();
+
+        cout << "Enter Starting Year (e.g., 2025): ";
+        int startYear;
+        cin >> startYear;
+        cin.ignore();
+
+        generateMonthlyPlan(loanAmount, downPayment, months, startMonth, startYear);
+        return "Monthly payment plan generated successfully.";
+    }
+    return "";
+}
+
+// LP4-26 - Fixed startLoanApplication function
 string startLoanApplication() {
     system("cls");
     setColor(COLOR_CYAN);
+
     cout << "\n====================================================\n";
     cout << "          LOAN APPLICATION FORM                     \n";
     cout << "====================================================\n\n";
     setColor(COLOR_WHITE);
-    
+
     Application app;
     ChatbotInput input;
     ChatbotDisplay display;
     ChatbotStorage storage;
-    
+
     // Application Base Info
     app.applicationID = generateApplicationID();
     app.status = "Pending";      // Your struct has only "status"
 
     cout << "Application ID: " << app.applicationID << "\n\n";
-    
+
     // ===== SECTION 1: PERSONAL INFO =====
     setColor(COLOR_YELLOW);
     cout << "\n--- Personal Information ---\n";
     setColor(COLOR_WHITE);
 
     app.fullName = input.getFullName();
+    // Validate full name - should contain only letters and spaces
+    if (!isAlpha(app.fullName)) {
+        setColor(COLOR_RED);
+        cout << "Invalid name! Name should contain only letters and spaces.\n";
+        setColor(COLOR_WHITE);
+
+        return "Application failed: Invalid name format.";
+    }
+
     app.fatherName = input.getFatherName();
+    // Validate father name - should contain only letters and spaces
+    if (!isAlpha(app.fatherName)) {
+        setColor(COLOR_RED);
+        cout << "Invalid father name! Name should contain only letters and spaces.\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid father name format.";
+    }
+
     app.postalAddress = input.getPostalAddress();
+    // Validate postal address - should not be empty
+    if (app.postalAddress.empty() || check_spaces(app.postalAddress)) {
+        setColor(COLOR_RED);
+        cout << "Invalid postal address! Address cannot be empty.\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid postal address.";
+    }
+
     app.contactNumber = input.getContactNumber();
+    // Validate phone number using your utility function
+    if (!isValidPhone(app.contactNumber)) {
+        setColor(COLOR_RED);
+        cout << "Invalid phone number! Please enter a valid phone number (10-13 digits).\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid phone number.";
+    }
+
+
     app.email = input.getEmail();
+    // Validate email using your utility function
+    if (!isValidEmail(app.email)) {
+        setColor(COLOR_RED);
+        cout << "Invalid email format! Please enter a valid email address.\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid email address.";
+    }
+
     app.gender = input.getGender();
+    // Validate gender - should be valid selection
+    string genderLower = toLowerString(app.gender);
+    if (genderLower != "male" && genderLower != "female" && genderLower != "other") {
+        setColor(COLOR_RED);
+        cout << "Invalid gender selection!\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid gender selection.";
+    }
+
     app.maritalStatus = input.getMaritalStatus();
+    // Validate marital status - should be valid selection
+    string maritalLower = toLowerString(app.maritalStatus);
+    if (maritalLower != "single" && maritalLower != "married" && maritalLower != "divorced" && maritalLower != "widowed") {
+        setColor(COLOR_RED);
+        cout << "Invalid marital status selection!\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid marital status.";
+    }
+
+
+    // Fix: dependents is already int from getDependents(), remove string validation
     app.dependents = input.getDependents();
+    // Validate dependents - should be reasonable (already validated in getDependents())
+    if (app.dependents < 0 || app.dependents > 20) {
+        setColor(COLOR_RED);
+        cout << "Invalid number of dependents! Please enter a reasonable number (0-20).\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid number of dependents.";
+    }
+
+    // ✅ ADDITION: Save checkpoint C1 - Personal Info Completed
+    app.status = "C1";
+    storage.saveApplicationToFile(app);
 
     // ===== SECTION 2: CNIC & EMPLOYMENT =====
     setColor(COLOR_YELLOW);
@@ -557,17 +809,73 @@ string startLoanApplication() {
     setColor(COLOR_WHITE);
 
     app.CNIC = input.getCNIC();
+    // Validate CNIC using your utility function
+    if (!isValidCNIC(app.CNIC)) {
+        setColor(COLOR_RED);
+        cout << "Invalid CNIC! Must be 13 digits (format: XXXXX-XXXXXXX-X or 13 digits without dashes).\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid CNIC.";
+    }
+
+
     app.CNICExpiry = input.getCNICExpiry();
+    // Validate CNIC expiry date using your utility function
+    if (!isValidDate(app.CNICExpiry)) {
+        setColor(COLOR_RED);
+        cout << "Invalid CNIC expiry date! Please use DD-MM-YYYY format and ensure it's a valid date.\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid CNIC expiry date.";
+    }
+
     app.employmentStatus = input.getEmploymentStatus();
+    // Validate employment status - should not be empty
+    if (app.employmentStatus.empty() || check_spaces(app.employmentStatus)) {
+        setColor(COLOR_RED);
+        cout << "Invalid employment status! Cannot be empty.\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid employment status.";
+    }
 
     // ===== SECTION 3: FINANCIAL INFO =====
     setColor(COLOR_YELLOW);
     cout << "\n--- Financial Information ---\n";
     setColor(COLOR_WHITE);
 
+    // Fix: annualIncome is already long long from getAnnualIncome(), remove string validation
     app.annualIncome = input.getAnnualIncome();
+    // Validate annual income - should be positive (already validated in getAnnualIncome())
+    if (app.annualIncome <= 0) {
+
+        setColor(COLOR_RED);
+        cout << "Invalid annual income! Must be greater than 0.\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid annual income amount.";
+    }
+
+    // Fix: avgBill is already long long from getAvgBill(), remove string validation
     app.avgBill = input.getAvgBill();
+    // Validate average bill - should be reasonable (already validated in getAvgBill())
+    if (app.avgBill < 0) {
+        setColor(COLOR_RED);
+        cout << "Invalid average bill! Cannot be negative.\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid average bill amount.";
+    }
+
+    // Fix: currentMonthBill is already long long from getCurrentMonthBill(), remove string validation
     app.currentMonthBill = input.getCurrentMonthBill();
+    // Validate current month bill - should be reasonable (already validated in getCurrentMonthBill())
+    if (app.currentMonthBill < 0) {
+        setColor(COLOR_RED);
+        cout << "Invalid current month bill! Cannot be negative.\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid current month bill amount.";
+    }
+
+    // ✅ ADDITION: Save checkpoint C2 - Financial Info Completed
+    app.status = "C2";
+
+    storage.saveApplicationToFile(app);
 
     // ===== SECTION 4: EXISTING LOAN =====
     setColor(COLOR_YELLOW);
@@ -577,12 +885,57 @@ string startLoanApplication() {
     app.hasExistingLoan = input.askHasExistingLoan();
 
     if (app.hasExistingLoan) {
+        // Fix: existingLoanAmount is already long long from getExistingLoanAmount(), remove string validation
         app.existingLoanAmount = input.getExistingLoanAmount();
+        // Validate existing loan amount - should be positive
+        if (app.existingLoanAmount <= 0) {
+            setColor(COLOR_RED);
+            cout << "Invalid existing loan amount! Must be greater than 0.\n";
+            setColor(COLOR_WHITE);
+            return "Application failed: Invalid existing loan amount.";
+        }
+
+        // Fix: amountReturned is already long long from getAmountReturned(), remove string validation
         app.amountReturned = input.getAmountReturned();
+        // Validate amount returned - should be non-negative
+        if (app.amountReturned < 0) {
+            setColor(COLOR_RED);
+            cout << "Invalid amount returned! Cannot be negative.\n";
+            setColor(COLOR_WHITE);
+            return "Application failed: Invalid amount returned.";
+        }
+
+
+        // Fix: amountDue is already long long from getAmountDue(), remove string validation
         app.amountDue = input.getAmountDue();
+        // Validate amount due - should be non-negative
+        if (app.amountDue < 0) {
+            setColor(COLOR_RED);
+            cout << "Invalid amount due! Cannot be negative.\n";
+            setColor(COLOR_WHITE);
+            return "Application failed: Invalid amount due.";
+        }
+
         app.existingLoanBank = input.getExistingLoanBank();
+        // Validate bank name
+        if (app.existingLoanBank.empty() || check_spaces(app.existingLoanBank)) {
+            setColor(COLOR_RED);
+            cout << "Invalid bank name! Cannot be empty.\n";
+            setColor(COLOR_WHITE);
+            return "Application failed: Invalid bank name.";
+        }
+
         app.existingLoanCategory = input.getExistingLoanCategory();
-    } else {
+        // Validate loan category
+        if (app.existingLoanCategory.empty() || check_spaces(app.existingLoanCategory)) {
+            setColor(COLOR_RED);
+            cout << "Invalid loan category! Cannot be empty.\n";
+            setColor(COLOR_WHITE);
+            return "Application failed: Invalid loan category.";
+        }
+    }
+
+    else {
         app.existingLoanAmount = 0;
         app.amountReturned = 0;
         app.amountDue = 0;
@@ -595,17 +948,94 @@ string startLoanApplication() {
     cout << "\n--- Reference Information ---\n";
     setColor(COLOR_WHITE);
 
+    // Reference 1
     app.referenceName[0] = input.getReferenceName(1);
-    app.referenceCNIC[0] = input.getReferenceCNIC(1);
-    app.referenceDate[0] = input.getReferenceDate(1);
-    app.referencePhone[0] = input.getReferencePhone(1);
-    app.referenceEmail[0] = input.getReferenceEmail(1);
+    if (!isAlpha(app.referenceName[0])) {
+        setColor(COLOR_RED);
+        cout << "Invalid reference name! Name should contain only letters and spaces.\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid reference name format.";
+    }
 
+    app.referenceCNIC[0] = input.getReferenceCNIC(1);
+    if (!isValidCNIC(app.referenceCNIC[0])) {
+        setColor(COLOR_RED);
+        cout << "Invalid reference CNIC! Must be 13 digits.\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid reference CNIC.";
+    }
+
+    app.referenceDate[0] = input.getReferenceDate(1);
+
+    if (!isValidDate(app.referenceDate[0])) {
+        setColor(COLOR_RED);
+        cout << "Invalid reference date! Please use DD-MM-YYYY format.\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid reference date.";
+    }
+
+    app.referencePhone[0] = input.getReferencePhone(1);
+    if (!isValidPhone(app.referencePhone[0])) {
+        setColor(COLOR_RED);
+        cout << "Invalid reference phone number! Please enter a valid phone number.\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid reference phone number.";
+    }
+
+    app.referenceEmail[0] = input.getReferenceEmail(1);
+    if (!isValidEmail(app.referenceEmail[0])) {
+        setColor(COLOR_RED);
+        cout << "Invalid reference email format! Please enter a valid email address.\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid reference email address.";
+    }
+
+    // Reference 2
     app.referenceName[1] = input.getReferenceName(2);
+    if (!isAlpha(app.referenceName[1])) {
+        setColor(COLOR_RED);
+        cout << "Invalid reference name! Name should contain only letters and spaces.\n";
+
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid reference name format.";
+    }
+
     app.referenceCNIC[1] = input.getReferenceCNIC(2);
+    if (!isValidCNIC(app.referenceCNIC[1])) {
+        setColor(COLOR_RED);
+        cout << "Invalid reference CNIC! Must be 13 digits.\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid reference CNIC.";
+    }
+
     app.referenceDate[1] = input.getReferenceDate(2);
+    if (!isValidDate(app.referenceDate[1])) {
+        setColor(COLOR_RED);
+        cout << "Invalid reference date! Please use DD-MM-YYYY format.\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid reference date.";
+    }
+
     app.referencePhone[1] = input.getReferencePhone(2);
+    if (!isValidPhone(app.referencePhone[1])) {
+        setColor(COLOR_RED);
+        cout << "Invalid reference phone number! Please enter a valid phone number.\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid reference phone number.";
+    }
+
     app.referenceEmail[1] = input.getReferenceEmail(2);
+    if (!isValidEmail(app.referenceEmail[1])) {
+
+        setColor(COLOR_RED);
+        cout << "Invalid reference email format! Please enter a valid email address.\n";
+        setColor(COLOR_WHITE);
+        return "Application failed: Invalid reference email address.";
+    }
+
+    // ✅ ADDITION: Save checkpoint C3 - References Completed
+    app.status = "C3";
+    storage.saveApplicationToFile(app);
 
     // ===== SECTION 6: DOCUMENTS =====
     setColor(COLOR_YELLOW);
@@ -617,6 +1047,19 @@ string startLoanApplication() {
     app.electricityBillPath = input.getElectricityBillPath();
     app.salarySlipPath = input.getSalarySlipPath();
 
+    // Validate document paths are not empty
+    if (app.CNICFrontPath.empty() || check_spaces(app.CNICFrontPath) ||
+        app.CNICBackPath.empty() || check_spaces(app.CNICBackPath) ||
+        app.electricityBillPath.empty() || check_spaces(app.electricityBillPath) ||
+        app.salarySlipPath.empty() || check_spaces(app.salarySlipPath)) {
+        setColor(COLOR_RED);
+        cout << "Invalid document paths! All document paths must be 
+
+            provided.\n";
+            setColor(COLOR_WHITE);
+        return "Application failed: Invalid document paths.";
+    }
+
     // ===== CONFIRMATION =====
     system("cls");
 
@@ -626,179 +1069,200 @@ string startLoanApplication() {
     string confirm = input.readUserInput();
 
     if (toLowerString(confirm) == "yes" || toLowerString(confirm) == "y") {
+        // ✅ ADDITION: Change status from C3 to Submitted before final save
+        app.status = "Submitted";
+
         if (storage.saveApplicationToFile(app)) {
             setColor(COLOR_GREEN);
             cout << "\n====================================================\n";
             cout << "  APPLICATION SUBMITTED SUCCESSFULLY!              \n";
             cout << "  Application ID: " << app.applicationID << "\n";
-            cout << "  Status: Pending Review                           \n";
+            cout << "  Status: Submitted                               \n";  // ✅ CHANGED from "Pending Review" to "Submitted"
             cout << "====================================================\n";
+
             setColor(COLOR_WHITE);
             return "Your loan application has been submitted successfully! Application ID: " + app.applicationID;
-        } else {
+        }
+        else {
             setColor(COLOR_RED);
             cout << "\nERROR: Failed to save application!\n";
             setColor(COLOR_WHITE);
             return "Error: Failed to submit application. Please try again.";
         }
-    } else {
+    }
+    else {
         setColor(COLOR_YELLOW);
         cout << "\nApplication cancelled.\n";
         setColor(COLOR_WHITE);
         return "Application cancelled. You can start again anytime.";
     }
 }
-// Generate monthly payment plan
-void generateMonthlyPlan(long long loanAmount, long long downPayment, int months, string startMonth, int startYear) {
-    long long principal = loanAmount - downPayment;
-    long long monthlyPayment = principal / months;
-    long long remaining = principal;
-    
-    string monthNames[] = {"January", "February", "March", "April", "May", "June",
-                          "July", "August", "September", "October", "November", "December"};
-    
-    int currentMonth = 0;
-    // Convert startMonth to index
-    for (int i = 0; i < 12; i++) {
-        if (toLowerString(startMonth) == toLowerString(monthNames[i])) {
-            currentMonth = i;
-            break;
-        }
-    }
-    
-    int currentYear = startYear;
-    
-    setColor(COLOR_CYAN);
-    cout << "\n============================================================\n";
-    cout << "               MONTHLY PAYMENT PLAN                         \n";
-    cout << "============================================================\n";
-    setColor(COLOR_WHITE);
-    
-    cout << "Loan Amount:     " << loanAmount << "\n";
-    cout << "Down Payment:    " << downPayment << "\n";
-    cout << "Principal:       " << principal << "\n";
-    cout << "Installments:    " << months << " months\n";
-    cout << "Monthly Payment: " << monthlyPayment << "\n\n";
-    
-    setColor(COLOR_YELLOW);
-    cout << left << setw(20) << "Month" 
-         << setw(20) << "Payment" 
-         << setw(20) << "Total Paid" 
-         << setw(20) << "Remaining" << "\n";
-    setColor(COLOR_CYAN);
-    cout << "------------------------------------------------------------\n";
-    setColor(COLOR_WHITE);
-    
-    for (int i = 1; i <= months; i++) {
-        long long paid = monthlyPayment * i;
-        remaining = principal - paid;
-        if (remaining < 0) remaining = 0;
-        
-        string monthYear = monthNames[currentMonth] + " " + to_string(currentYear);
-        
-        cout << left << setw(20) << monthYear
-             << setw(20) << monthlyPayment
-             << setw(20) << paid
-             << setw(20) << remaining << "\n";
-        
-        currentMonth++;
-        if (currentMonth >= 12) {
-            currentMonth = 0;
-            currentYear++;
-        }
-    }
-    
-    setColor(COLOR_CYAN);
-    cout << "============================================================\n";
-    setColor(COLOR_WHITE);
-}
 
-bool QueryApplication(string target){
-    if (target.find("my applications") != string::npos || 
-    target.find("application status") != string::npos ||
-    target.find("check application") != string::npos) {
-    
-    cout << "Enter your CNIC (13 digits): ";
+// LP4-27 - Fixed resumeApplication function
+string resumeApplication() {
+    system("cls");
+    setColor(COLOR_CYAN);
+    cout << "\n====================================================\n";
+    cout << "          RESUME APPLICATION FORM                  \n";
+    cout << "====================================================\n\n";
+    setColor(COLOR_WHITE);
+
+
     ChatbotInput input;
-    string cnic = input.readUserInput();
-    
     ChatbotStorage storage;
-    int total = storage.countApplicationsByCNIC(cnic);
-    int pending = storage.countApplicationsByCNIC(cnic, "Pending");
-    int approved = storage.countApplicationsByCNIC(cnic, "Approved");
-    int rejected = storage.countApplicationsByCNIC(cnic, "Rejected");
-    
-    setColor(COLOR_CYAN);
-    cout << "\n========================================\n";
-    cout << "   APPLICATION STATUS FOR CNIC: " << cnic << "\n";
-    cout << "========================================\n";
-    setColor(COLOR_WHITE);
-    
-    cout << "Total Applications:    " << total << "\n";
-    setColor(COLOR_YELLOW);
-    cout << "Pending Applications:  " << pending << "\n";
-    setColor(COLOR_GREEN);
-    cout << "Approved Applications: " << approved << "\n";
-    setColor(COLOR_RED);
-    cout << "Rejected Applications: " << rejected << "\n";
-    setColor(COLOR_WHITE);
-    
-    cout << "\n========================================\n";
-    return true;
+    ChatbotDisplay display;
+
+    // Ask for Application ID
+    string appID;
+    bool validAppID = false;
+    while (!validAppID) {
+        cout << "Enter Application ID: ";
+        appID = input.readUserInput();
+        appID = trimString(appID);
+
+        if (appID.empty() || check_spaces(appID)) {
+            setColor(COLOR_RED);
+            cout << "Application ID cannot be empty! Please enter a valid Application ID.\n";
+            setColor(COLOR_WHITE);
+            continue;
+        }
+
+        if (!isNumeric(appID)) {
+            setColor(COLOR_RED);
+            cout << "Application ID must contain only numbers! Please enter a valid Application ID.\n";
+            setColor(COLOR_WHITE);
+            continue;
+        }
+
+        // Fix: Remove strict 4-digit length requirement since generateApplicationID() might vary
+        // if (appID.length() != 4) {
+        //     setColor(COLOR_RED);
+
+        //     cout << "Application ID must be exactly 4 digits! Please enter a valid Application ID.\n";
+        //     setColor(COLOR_WHITE);
+        //     continue;
+        // }
+
+        validAppID = true;
     }
-    return false;
+
+    // Ask for CNIC
+    string cnic;
+    bool validCNIC = false;
+    while (!validCNIC) {
+        cout << "Enter CNIC (13 digits): ";
+        cnic = input.readUserInput();
+        cnic = trimString(cnic);
+
+        if (cnic.empty() || check_spaces(cnic)) {
+            setColor(COLOR_RED);
+            cout << "CNIC cannot be empty! Please enter your CNIC.\n";
+            setColor(COLOR_WHITE);
+            continue;
+        }
+
+        // Fix: Normalize CNIC first, then validate
+        string cleanCNIC = "";
+        for (char c : cnic) {
+            if (c >= '0' && c <= '9') {
+                cleanCNIC += c;
+            }
+        }
+
+
+        // Fix: Validate cleaned CNIC instead of original
+        if (cleanCNIC.length() != 13) {
+            setColor(COLOR_RED);
+            cout << "Invalid CNIC! Must be exactly 13 digits.\n";
+            setColor(COLOR_WHITE);
+            continue;
+        }
+
+        cnic = cleanCNIC; // Use the cleaned CNIC
+        validCNIC = true;
+    }
+
+    // Get application by ID
+    Application app = storage.getApplicationByID(appID);
+
+    // Check if application exists
+    if (app.applicationID.empty()) {
+        setColor(COLOR_RED);
+        cout << "Application not found!\n";
+        setColor(COLOR_WHITE);
+        return "Application ID not found. Please check and try again.";
+    }
+
+    // Verify CNIC matches
+    string appCNICClean = "";
+    for (char c : app.CNIC) {
+        if (c >= '0' && c <= '9') {
+            appCNICClean += c;
+        }
+    }
+
+    if (appCNICClean != cnic) {
+
+        setColor(COLOR_RED);
+        cout << "CNIC does not match application records!\n";
+        setColor(COLOR_WHITE);
+        return "CNIC verification failed. Cannot resume application.";
+    }
+
+    // Check application status
+    if (app.status == "Submitted") {
+        setColor(COLOR_RED);
+        cout << "Application already submitted! Cannot edit.\n";
+        cout << "Current Status: " << app.status << "\n";
+        setColor(COLOR_WHITE);
+        return "This application has been submitted and cannot be edited.";
+    }
+
+    // Check if status allows editing (C1/C2/C3 or Pending)
+    if (app.status != "C1" && app.status != "C2" && app.status != "C3" && app.status != "Pending") {
+        setColor(COLOR_RED);
+        cout << "Application status does not allow editing!\n";
+        cout << "Current Status: " << app.status << "\n";
+        setColor(COLOR_WHITE);
+        return "This application cannot be edited due to its current status: " + app.status;
+    }
+
+    // Application can be resumed - show current data
+    setColor(COLOR_GREEN);
+    cout << "\nApplication found! Loading your data...\n";
+    setColor(COLOR_WHITE);
+
+
+    display.showApplicationSummary(app);
+
+    cout << "\nDo you want to continue from where you left off? (yes/no): ";
+    string confirm = input.readUserInput();
+
+    if (toLowerString(confirm) != "yes" && toLowerString(confirm) != "y") {
+        return "Resume cancelled.";
+    }
+
+    // Update status to indicate it's being edited
+    app.status = "In Progress";
+
+    // Save the updated application
+    if (storage.saveApplicationToFile(app)) {
+        setColor(COLOR_GREEN);
+        cout << "\nApplication resumed successfully!\n";
+        cout << "You can now continue with the application process.\n";
+        setColor(COLOR_WHITE);
+        return "Application " + appID + " has been resumed successfully!";
+    }
+    else {
+        setColor(COLOR_RED);
+        cout << "Error saving application!\n";
+        setColor(COLOR_WHITE);
+        return "Error resuming application. Please try again.";
+    }
 }
 
-string viewMonthlyPlan(string target){
-    if (target.find("monthly plan") != string::npos || 
-        target.find("payment plan") != string::npos ||
-        target.find("installment plan") != string::npos) {
-    
-        cout << "Enter your Application ID: ";
-        ChatbotInput input;
-        string appID = input.readUserInput();
-        
-        ChatbotStorage storage;
-        Application app = storage.getApplicationByID(appID);
-        
-        if (app.applicationID.empty()) {
-            return "Application not found. Please check the ID and try again.";
-        }
-        
-        if (app.status != "Approved") {
-            return "This application is not approved yet. Status: " + app.status;
-        }
-        
-        // Ask for loan details
-        cout << "Enter Loan Amount: ";
-        long long loanAmount;
-        cin >> loanAmount;
-        cin.ignore();
-        
-        cout << "Enter Down Payment: ";
-        long long downPayment;
-        cin >> downPayment;
-        cin.ignore();
-        
-        cout << "Enter Number of Installments: ";
-        int months;
-        cin >> months;
-        cin.ignore();
-        
-        cout << "Enter Starting Month (e.g., January): ";
-        string startMonth = input.readUserInput();
-        
-        cout << "Enter Starting Year (e.g., 2025): ";
-        int startYear;
-        cin >> startYear;
-        cin.ignore();
-        
-        generateMonthlyPlan(loanAmount, downPayment, months, startMonth, startYear);
-        return "Monthly payment plan generated successfully.";
-    }
-    return "";
-}
 // ---------------------------------Chatbot Response Processing Module----------------------------
+
 // LP4-8 Assigned to Kabeer
 
 string ChatbotProcessor::generateResponse(const string& input, string filename) {
@@ -828,6 +1292,7 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
             selectedLoanType = "";
             return "Okay! You can select a different loan type from the main menu.";
         }
+
         else {
             return "Please enter YES to apply, or NO to go back.";
         }
@@ -856,11 +1321,12 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
         cout << "================================================================\n";
 
         if (selectedLoanType == "home") {
+
             setColor(14);
             cout << left << setw(15) << "Size"
-                 << setw(22) << "Price"
-                 << setw(20) << "Down Payment"
-                 << setw(20) << "Monthly Installment" << endl;
+                << setw(22) << "Price"
+                << setw(20) << "Down Payment"
+                << setw(20) << "Monthly Installment" << endl;
             setColor(8);
             cout << "--------------------------------------------------------------------\n";
 
@@ -882,22 +1348,23 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
                         found = true;
                         setColor(10);
                         cout << left << setw(15) << size
-                             << setw(22) << price
-                             << setw(20) << down
-                             << setw(20) << to_string(monthly) << endl;
+                            << setw(22) << price
+                            << setw(20) << down
+                            << setw(20) << to_string(monthly) << endl;
                     }
                 }
+
             }
         }
         else if (selectedLoanType == "car") {
             setColor(14);
             cout << left << setw(15) << "Model"
-                 << setw(12) << "Engine"
-                 << setw(8) << "Used"
-                 << setw(8) << "Year"
-                 << setw(20) << "Price"
-                 << setw(18) << "Down Payment"
-                 << setw(20) << "Monthly" << endl;
+                << setw(12) << "Engine"
+                << setw(8) << "Used"
+                << setw(8) << "Year"
+                << setw(20) << "Price"
+                << setw(18) << "Down Payment"
+                << setw(20) << "Monthly" << endl;
             setColor(8);
             cout << "--------------------------------------------------------------------\n";
 
@@ -919,15 +1386,16 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
                         long long months = stoll(inst);
                         long long monthly = (priceVal - downVal) / months;
 
+
                         found = true;
                         setColor(10);
                         cout << left << setw(15) << model
-                             << setw(12) << engine
-                             << setw(8) << used
-                             << setw(8) << year
-                             << setw(20) << price
-                             << setw(18) << down
-                             << setw(20) << to_string(monthly) << endl;
+                            << setw(12) << engine
+                            << setw(8) << used
+                            << setw(8) << year
+                            << setw(20) << price
+                            << setw(18) << down
+                            << setw(20) << to_string(monthly) << endl;
                     }
                 }
             }
@@ -935,12 +1403,12 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
         else if (selectedLoanType == "scooter") {
             setColor(14);
             cout << left << setw(15) << "Model"
-                 << setw(12) << "Range(KM)"
-                 << setw(15) << "Charge(Hrs)"
-                 << setw(15) << "Speed(KM/H)"
-                 << setw(20) << "Price"
-                 << setw(18) << "Down Payment"
-                 << setw(20) << "Monthly" << endl;
+                << setw(12) << "Range(KM)"
+                << setw(15) << "Charge(Hrs)"
+                << setw(15) << "Speed(KM/H)"
+                << setw(20) << "Price"
+                << setw(18) << "Down Payment"
+                << setw(20) << "Monthly" << endl;
             setColor(8);
             cout << "--------------------------------------------------------------------\n";
 
@@ -949,6 +1417,7 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
                 if (fields.size() >= 8) {
                     string make = fields[0];
                     string model = fields[1];
+
                     string distance = fields[2];
                     string charging = fields[3];
                     string speed = fields[4];
@@ -965,12 +1434,12 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
                         found = true;
                         setColor(10);
                         cout << left << setw(15) << model
-                             << setw(12) << distance
-                             << setw(15) << charging
-                             << setw(15) << speed
-                             << setw(20) << price
-                             << setw(18) << down
-                             << setw(20) << to_string(monthly) << endl;
+                            << setw(12) << distance
+                            << setw(15) << charging
+                            << setw(15) << speed
+                            << setw(20) << price
+                            << setw(18) << down
+                            << setw(20) << to_string(monthly) << endl;
                     }
                 }
             }
@@ -980,6 +1449,7 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
         setColor(8);
         cout << "--------------------------------------------------------------------\n";
         setColor(7);
+
 
         if (!found) {
             return "No plan found for that installment period. Try again or 'B' to go back.";
@@ -1011,7 +1481,8 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
         // Convert input to proper format based on loan type
         if (selectedLoanType == "home") {
             selectedOption = "Area " + input;
-        } 
+
+        }
         else if (selectedLoanType == "car" || selectedLoanType == "scooter") {
             // Convert "1" -> "Make 1", "2" -> "Make 2"
             selectedOption = "Make " + input;
@@ -1028,22 +1499,23 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
         if (selectedLoanType == "home") {
             setColor(14);
             cout << left << setw(15) << "Size"
-                 << setw(18) << "Installments"
-                 << setw(22) << "Price"
-                 << setw(18) << "Down Payment" << endl;
+                << setw(18) << "Installments"
+                << setw(22) << "Price"
+                << setw(18) << "Down Payment" << endl;
             setColor(8);
             cout << "---------------------------------------------------------------\n";
 
             bool found = false;
             while (getline(file, line)) {
                 vector<string> fields = parseLine(line, '#');
+
                 if (fields.size() >= 5 && fields[0] == selectedOption) {
                     found = true;
                     setColor(10);
                     cout << left << setw(15) << fields[1]
-                         << setw(18) << fields[2]
-                         << setw(22) << fields[3]
-                         << setw(18) << fields[4] << endl;
+                        << setw(18) << fields[2]
+                        << setw(22) << fields[3]
+                        << setw(18) << fields[4] << endl;
                 }
             }
 
@@ -1063,12 +1535,13 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
         else if (selectedLoanType == "car") {
             setColor(14);
             cout << left << setw(15) << "Model"
-                 << setw(12) << "Engine"
-                 << setw(8) << "Used"
-                 << setw(8) << "Year"
-                 << setw(18) << "Installments"
-                 << setw(20) << "Price"
-                 << setw(18) << "Down" << endl;
+                << setw(12) << "Engine"
+                << setw(8) << "Used"
+                << setw(8) << "Year"
+                << setw(18) << "Installments"
+                << setw(20) << "Price"
+
+                << setw(18) << "Down" << endl;
             setColor(8);
             cout << "---------------------------------------------------------------\n";
 
@@ -1079,12 +1552,12 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
                     found = true;
                     setColor(10);
                     cout << left << setw(15) << fields[1]
-                         << setw(12) << fields[2]
-                         << setw(8) << fields[3]
-                         << setw(8) << fields[4]
-                         << setw(18) << fields[5]
-                         << setw(20) << fields[6]
-                         << setw(18) << fields[7] << endl;
+                        << setw(12) << fields[2]
+                        << setw(8) << fields[3]
+                        << setw(8) << fields[4]
+                        << setw(18) << fields[5]
+                        << setw(20) << fields[6]
+                        << setw(18) << fields[7] << endl;
                 }
             }
 
@@ -1098,18 +1571,19 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
                 return "No options available. Please try again.";
             }
             awaitingInstallmentInput = true;
+
             awaitingSelection = false;
             return "\nEnter number of installments (e.g. 48, 60):";
         }
         else if (selectedLoanType == "scooter") {
             setColor(14);
             cout << left << setw(15) << "Model"
-                 << setw(12) << "Range"
-                 << setw(15) << "Charge Time"
-                 << setw(15) << "Max Speed"
-                 << setw(18) << "Installments"
-                 << setw(20) << "Price"
-                 << setw(18) << "Down" << endl;
+                << setw(12) << "Range"
+                << setw(15) << "Charge Time"
+                << setw(15) << "Max Speed"
+                << setw(18) << "Installments"
+                << setw(20) << "Price"
+                << setw(18) << "Down" << endl;
             setColor(8);
             cout << "---------------------------------------------------------------\n";
 
@@ -1120,12 +1594,12 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
                     found = true;
                     setColor(10);
                     cout << left << setw(15) << fields[1]
-                         << setw(12) << fields[2]
-                         << setw(15) << fields[3]
-                         << setw(15) << fields[4]
-                         << setw(18) << fields[5]
-                         << setw(20) << fields[6]
-                         << setw(18) << fields[7] << endl;
+                        << setw(12) << fields[2]
+                        << setw(15) << fields[3]
+                        << setw(15) << fields[4]
+                        << setw(18) << fields[5]
+                        << setw(20) << fields[6]
+                        << setw(18) << fields[7] << endl;
                 }
             }
 
@@ -1158,20 +1632,26 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
         return "You are applying for a car loan. Please select make (Make 1, Make 2):";
     }
     else if (target == "s") {
+
         selectedLoanType = "scooter";
         currentDataFile = "data/Scooter.txt";
         awaitingSelection = true;
         return "You are applying for a scooter loan. Please select make (Make 1):";
     }
-    
+
     // ---------------- Query Applications by CNIC ----------------
-    if(QueryApplication(target))
-    return "Application status retrieved successfully.";
+    if (QueryApplication(target))
+        return "Application status retrieved successfully.";
 
     // ---------------- View Monthly Plan for Approved Application ----------------
     string monthlyPlanResponse = viewMonthlyPlan(target);
     if (!monthlyPlanResponse.empty()) {
         return monthlyPlanResponse;
+    }
+
+    // ---------------- Handle Resume Application Command ----------------
+    if (target.find("resume") != string::npos || target.find("continue") != string::npos || target.find("unfinished") != string::npos) {
+        return resumeApplication();
     }
 
     // ---------------- Generic Response Handling ----------------
@@ -1214,6 +1694,7 @@ string ChatbotProcessor::analyzeIntent(const string& input) {
     // TODO: Implement intent/sentiment analysis
 }
 
+
 string ChatbotProcessor::processLoanQuery(const string keywords[], int keywordCount) {
     // TODO: Implement loan query handling
 }
@@ -1227,7 +1708,7 @@ string ChatbotProcessor::getContextInfo(const string& query) {
 
 void ChatbotDisplay::displayResponse(const string& response) {
 
-    setColor(COLOR_CYAN);          
+    setColor(COLOR_CYAN);
     cout << "LoanMate: ";
     setColor(COLOR_WHITE);
 
@@ -1235,7 +1716,7 @@ void ChatbotDisplay::displayResponse(const string& response) {
         cout << response[i];
         Sleep(10);
     }
-    cout<<endl<<endl;
+    cout << endl << endl;
 }
 
 void ChatbotDisplay::showWelcomeMessage() {
@@ -1243,6 +1724,7 @@ void ChatbotDisplay::showWelcomeMessage() {
     system("cls");
 
     // Title
+
     setColor(COLOR_CYAN);
     cout << "\n";
     cout << "  ======================================================\n";
@@ -1271,6 +1753,7 @@ void ChatbotDisplay::showWelcomeMessage() {
 
     cout << "\n\n";
 
+
     // Progress bar animation
     setColor(COLOR_GREEN);
     cout << "          [";
@@ -1298,7 +1781,8 @@ void ChatbotDisplay::showWelcomeMessage() {
 
     setColor(COLOR_CYAN);
     cout << "  ======================================================\n\n";
-    
+
+
     setColor(COLOR_YELLOW);
     cout << "          Press any key to start chatting...\n";
     setColor(COLOR_WHITE);
@@ -1329,6 +1813,7 @@ void ChatbotDisplay::showApplicationSummary(Application& app)
 
     cout << "---- CNIC & Employment ----\n";
     cout << "CNIC:           " << app.CNIC << "\n";
+
     cout << "CNIC Expiry:    " << app.CNICExpiry << "\n";
     cout << "Employment:     " << app.employmentStatus << "\n\n";
 
@@ -1345,15 +1830,17 @@ void ChatbotDisplay::showApplicationSummary(Application& app)
         cout << "Amount Due:     " << app.amountDue << "\n";
         cout << "Bank:           " << app.existingLoanBank << "\n";
         cout << "Category:       " << app.existingLoanCategory << "\n\n";
-    } else cout << "\n";
+    }
+    else cout << "\n";
 
     cout << "---- References ----\n";
     for (int i = 0; i < 2; ++i) {
-        cout << "Ref " << (i+1) << " Name:  " << app.referenceName[i] << "\n";
-        cout << "Ref " << (i+1) << " CNIC:  " << app.referenceCNIC[i] << "\n";
-        cout << "Ref " << (i+1) << " Date:  " << app.referenceDate[i] << "\n";
-        cout << "Ref " << (i+1) << " Phone: " << app.referencePhone[i] << "\n";
-        cout << "Ref " << (i+1) << " Email: " << app.referenceEmail[i] << "\n";
+        cout << "Ref " << (i + 1) << " Name:  " << app.referenceName[i] << "\n";
+        cout << "Ref " << (i + 1) << " CNIC:  " << app.referenceCNIC[i] << "\n";
+        cout << "Ref " << (i + 1) << " Date:  " << app.referenceDate[i] << "\n";
+        cout << "Ref " << (i + 1) << " Phone: " << app.referencePhone[i] << "\n";
+        cout << "Ref " << (i + 1) << " Email: " << app.referenceEmail[i] << "\n";
+
     }
     cout << "\n---- Documents (paths) ----\n";
     cout << "CNIC Front:     " << app.CNICFrontPath << "\n";
@@ -1365,8 +1852,6 @@ void ChatbotDisplay::showApplicationSummary(Application& app)
     cout << "===========================================================\n\n";
     setColor(COLOR_WHITE);
 }
-
-
 void ChatbotDisplay::showError(const string& errorMessage) {
     // TODO: Display error messages
     setColor(COLOR_RED);
@@ -1385,6 +1870,7 @@ string ChatbotDisplay::formatOutput(const string& text) {
 
 // persist application to disk as a text file (returns true on success)
 bool ChatbotStorage::saveApplicationToFile(Application app)
+
 {
     // ensure directories exist (uses WinAPI)
     CreateDirectoryA("data", NULL);
@@ -1415,6 +1901,7 @@ bool ChatbotStorage::saveApplicationToFile(Application app)
     ofs << "CurrentMonthBill:" << app.currentMonthBill << "\n\n";
 
     ofs << "HasExistingLoan:" << (app.hasExistingLoan ? "1" : "0") << "\n";
+
     ofs << "ExistingLoanAmount:" << app.existingLoanAmount << "\n";
     ofs << "AmountReturned:" << app.amountReturned << "\n";
     ofs << "AmountDue:" << app.amountDue << "\n";
@@ -1423,8 +1910,8 @@ bool ChatbotStorage::saveApplicationToFile(Application app)
 
     for (int i = 0; i < 2; ++i) {
         ofs << "ReferenceName" << i << ":" << app.referenceName[i] << "\n";
-        ofs << "ReferenceCNIC"  << i << ":" << app.referenceCNIC[i] << "\n";
-        ofs << "ReferenceDate"  << i << ":" << app.referenceDate[i] << "\n";
+        ofs << "ReferenceCNIC" << i << ":" << app.referenceCNIC[i] << "\n";
+        ofs << "ReferenceDate" << i << ":" << app.referenceDate[i] << "\n";
         ofs << "ReferencePhone" << i << ":" << app.referencePhone[i] << "\n";
         ofs << "ReferenceEmail" << i << ":" << app.referenceEmail[i] << "\n";
     }
@@ -1440,26 +1927,27 @@ bool ChatbotStorage::saveApplicationToFile(Application app)
 // Count applications by CNIC (optionally filter by status)
 int ChatbotStorage::countApplicationsByCNIC(const string& cnic, const string& status) {
     int count = 0;
-    
+
     // Open applications directory
+
     WIN32_FIND_DATAA findData;
     HANDLE hFind = FindFirstFileA("data\\applications\\*.txt", &findData);
-    
+
     if (hFind == INVALID_HANDLE_VALUE) {
         return 0;
     }
-    
+
     do {
         string filename = findData.cFileName;
         string filepath = "data\\applications\\" + filename;
-        
+
         ifstream file(filepath);
         if (!file.is_open()) continue;
-        
+
         string line;
         string fileCNIC = "";
         string fileStatus = "";
-        
+
         // Read file to find CNIC and Status
         while (getline(file, line)) {
             if (line.find("CNIC:") == 0) {
@@ -1470,9 +1958,10 @@ int ChatbotStorage::countApplicationsByCNIC(const string& cnic, const string& st
             }
         }
         file.close();
-        
+
         // Check if CNIC matches
         if (fileCNIC == cnic) {
+
             // If status filter is empty, count all
             if (status.empty()) {
                 count++;
@@ -1482,9 +1971,9 @@ int ChatbotStorage::countApplicationsByCNIC(const string& cnic, const string& st
                 count++;
             }
         }
-        
+
     } while (FindNextFileA(hFind, &findData));
-    
+
     FindClose(hFind);
     return count;
 }
@@ -1492,24 +1981,25 @@ int ChatbotStorage::countApplicationsByCNIC(const string& cnic, const string& st
 // Get all applications for a CNIC
 vector<Application> ChatbotStorage::getApplicationsByCNIC(const string& cnic) {
     vector<Application> apps;
-    
+
     WIN32_FIND_DATAA findData;
     HANDLE hFind = FindFirstFileA("data\\applications\\*.txt", &findData);
-    
+
     if (hFind == INVALID_HANDLE_VALUE) {
         return apps;
     }
-    
+
     do {
         string filename = findData.cFileName;
         string filepath = "data\\applications\\" + filename;
-        
+
+
         ifstream file(filepath);
         if (!file.is_open()) continue;
-        
+
         Application app;
         string line;
-        
+
         // Parse the file
         while (getline(file, line)) {
             if (line.find("ApplicationID:") == 0) app.applicationID = line.substr(14);
@@ -1524,14 +2014,15 @@ vector<Application> ChatbotStorage::getApplicationsByCNIC(const string& cnic) {
             // Add more fields as needed
         }
         file.close();
-        
+
         // If CNIC matches, add to vector
         if (app.CNIC == cnic) {
             apps.push_back(app);
         }
-        
+
+
     } while (FindNextFileA(hFind, &findData));
-    
+
     FindClose(hFind);
     return apps;
 }
@@ -1540,13 +2031,13 @@ vector<Application> ChatbotStorage::getApplicationsByCNIC(const string& cnic) {
 Application ChatbotStorage::getApplicationByID(const string& appID) {
     Application app;
     string filepath = "data\\applications\\" + appID + ".txt";
-    
+
     ifstream file(filepath);
     if (!file.is_open()) {
         app.applicationID = ""; // Empty means not found
         return app;
     }
-    
+
     string line;
     while (getline(file, line)) {
         if (line.find("ApplicationID:") == 0) app.applicationID = line.substr(14);
@@ -1555,6 +2046,7 @@ Application ChatbotStorage::getApplicationByID(const string& appID) {
         else if (line.find("FatherName:") == 0) app.fatherName = line.substr(11);
         else if (line.find("PostalAddress:") == 0) app.postalAddress = line.substr(14);
         else if (line.find("ContactNumber:") == 0) app.contactNumber = line.substr(14);
+
         else if (line.find("Email:") == 0) app.email = line.substr(6);
         else if (line.find("Gender:") == 0) app.gender = line.substr(7);
         else if (line.find("MaritalStatus:") == 0) app.maritalStatus = line.substr(14);
@@ -1573,6 +2065,7 @@ Application ChatbotStorage::getApplicationByID(const string& appID) {
         else if (line.find("ExistingLoanCategory:") == 0) app.existingLoanCategory = line.substr(21);
         // Parse references
         else if (line.find("ReferenceName0:") == 0) app.referenceName[0] = line.substr(15);
+
         else if (line.find("ReferenceCNIC0:") == 0) app.referenceCNIC[0] = line.substr(15);
         else if (line.find("ReferenceDate0:") == 0) app.referenceDate[0] = line.substr(15);
         else if (line.find("ReferencePhone0:") == 0) app.referencePhone[0] = line.substr(16);
@@ -1588,18 +2081,19 @@ Application ChatbotStorage::getApplicationByID(const string& appID) {
         else if (line.find("ElectricityBillPath:") == 0) app.electricityBillPath = line.substr(20);
         else if (line.find("SalarySlipPath:") == 0) app.salarySlipPath = line.substr(15);
     }
-    
+
     file.close();
     return app;
 }
+
 // --------------------------------------Testing and Debug Module-----------------------------------
 //LP4-10 Assigned to Haider
 
 // Test if all inputs from Utterances.txt are validated correctly
 bool ChatbotTester::testInputProcessing()
-{   
+{
     setColor(COLOR_MAGENTA);
-    cout << "\n=== Testing Input Processing ===" << endl<< endl;
+    cout << "\n=== Testing Input Processing ===" << endl << endl;
     setColor(COLOR_WHITE);
 
     ifstream file("data/Utterances.txt");
@@ -1623,12 +2117,13 @@ bool ChatbotTester::testInputProcessing()
         for (int i = 0; i < line.length(); i++)
         {
             if (line[i] == '#')
+
             {
                 found = 1;
                 string input = "";
 
                 // Extract input part before '#'
-                for (int j = 0; j < i; j++) input += line[j];                
+                for (int j = 0; j < i; j++) input += line[j];
 
                 // sanitize using validateInput
                 string tmp = input;
@@ -1647,7 +2142,7 @@ bool ChatbotTester::testInputProcessing()
 bool ChatbotTester::testResponseGeneration()
 {
     setColor(COLOR_MAGENTA);
-    cout << "\n=== Testing Response Generation ===" << endl<< endl;
+    cout << "\n=== Testing Response Generation ===" << endl << endl;
     setColor(COLOR_WHITE);
     // Open the utterances file (format: user_input#expected_response per line)
     ifstream file("data/Utterances.txt");
@@ -1663,7 +2158,7 @@ bool ChatbotTester::testResponseGeneration()
     ChatbotInput inputProcessor;
 
     // Read each line from data/Utterances.txt file
-   while (getline(file, line))
+    while (getline(file, line))
     {   // Find separator index ('#') between input and expected response
         int pos = -1;
         for (int i = 0; i < (int)line.length(); i++)
@@ -1671,7 +2166,7 @@ bool ChatbotTester::testResponseGeneration()
             if (line[i] == '#') { pos = i; break; }
         }
 
-         // If a separator exists, extract input and expected response
+        // If a separator exists, extract input and expected response
         if (pos != -1)
         {
             string input = line.substr(0, pos);  // raw input from file
@@ -1683,16 +2178,17 @@ bool ChatbotTester::testResponseGeneration()
             string sanitized = inputProcessor.validateInput(tmp);
 
             // Generate the chatbot response for the sanitized input
+
             ChatbotProcessor processor;
             string response = processor.generateResponse(sanitized);
 
             // Compare actual response to expected and report result
-            if (response == expected){
+            if (response == expected) {
                 setColor(COLOR_GREEN);
                 cout << "PASS: " << input << " -> Correct" << endl;
                 setColor(COLOR_WHITE);
             }
-                
+
             else {
                 setColor(COLOR_RED);
                 cout << "FAIL: " << input << endl;
@@ -1714,6 +2210,7 @@ bool ChatbotTester::validateResponse(const string& input, const string& expected
     string response = processor.generateResponse(input);
 
     if (response == expectedOutput)
+
     {
         setColor(COLOR_GREEN);
         cout << "PASS: " << input << " -> Correct" << endl;
@@ -1736,7 +2233,7 @@ bool ChatbotTester::validateResponse(const string& input, const string& expected
 bool ChatbotTester::testHomeLoanData()
 {
     setColor(COLOR_MAGENTA);
-    cout << "\n=== Testing Home Loan Data ===" << endl<< endl;
+    cout << "\n=== Testing Home Loan Data ===" << endl << endl;
     setColor(COLOR_WHITE);
     ifstream file("data/Home.txt");
     string line;
@@ -1746,6 +2243,7 @@ bool ChatbotTester::testHomeLoanData()
     {
         cout << "ERROR: Cannot open data/Home.txt" << endl;
         return false;
+
     }
 
     // Skip first line (header)
@@ -1778,6 +2276,7 @@ bool ChatbotTester::testHomeLoanData()
                 else if (count == 4)
                 {
                     pos4 = i;
+
                 }
             }
         }
@@ -1810,6 +2309,7 @@ bool ChatbotTester::testHomeLoanData()
             }
 
             // Extract price (between third and fourth '#')
+
             for (int i = pos3 + 1; i < pos4; i++)
             {
                 price += line[i];
