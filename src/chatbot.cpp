@@ -1009,6 +1009,56 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
                 }
             }
         }
+        else if (selectedLoanType == "personal") {
+        setColor(14);
+        cout << left << setw(15) << "Loan Amount"
+            << setw(14) << "Installments"
+            << setw(12) << "Interest"
+            << setw(18) << "Processing Fee"
+            << setw(20) << "Monthly Payment" << endl;
+        setColor(8);
+        cout << "--------------------------------------------------------------------\n";
+
+        // iterate lines and find the row where loan amount == selectedOption and installments == input
+        while (getline(file, line)) {
+            vector<string> fields = parseLine(line, '#');
+            if (fields.size() >= 5) {
+                string loanAmt = fields[1];
+                string inst = fields[2];
+                string interestStr = fields[3];
+                string feeStr = fields[4];
+
+                if (loanAmt == selectedOption && inst == input) {
+                    // parse numeric values
+                    long long principal = stoll(removeCommas(loanAmt));
+
+                    // clean interest (remove trailing '%' if present)
+                    string interestClean = interestStr;
+                    if (!interestClean.empty() && interestClean.back() == '%') interestClean.pop_back();
+
+                    double interestPct = 0.0;
+                    try { interestPct = stod(interestClean); } catch (...) { interestPct = 0.0; }
+
+                    long long processingFee = stoll(removeCommas(feeStr));
+                    long long months = stoll(inst);
+
+                    // flat interest (simple): interestAmount = principal * interestPct / 100
+                    long long interestAmount = (long long)((principal * interestPct)/100.0 + 0.5);
+                    long long totalPayable = principal + interestAmount + processingFee;
+                    long long monthly = totalPayable / months;
+
+                    found = true; // reuse the same 'found' flag used by other branches
+                    setColor(10);
+                    cout << left
+                        << setw(15) << loanAmt
+                        << setw(14) << inst
+                        << setw(12) << interestStr
+                        << setw(18) << feeStr
+                        << setw(20) << to_string(monthly) << endl;
+                }
+            }
+        }
+}
 
         file.close();
         setColor(8);
@@ -1176,6 +1226,82 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
             awaitingSelection = false;
             return "\nEnter number of installments (e.g. 48, 60):";
         }
+
+        else if (selectedLoanType == "personal") {
+        // Input is expected to be an option number (index)
+        int optionIndex = -1;
+        try {
+            optionIndex = stoi(input);
+        } catch (...) {
+            awaitingSelection = true;
+            return "Please enter a valid option number (e.g. 1, 2, ...).";
+        }
+
+        // Read file and show the option selected (also show numbered list if index is out of range)
+        vector<string> rows;
+        string row;
+        while (getline(file, row)) {
+            // skip empty lines
+            if (trimString(row).empty()) continue;
+            rows.push_back(row);
+        }
+        if (rows.empty()) {
+            file.close();
+            awaitingSelection = false;
+            return "No personal loan options available at the moment.";
+        }
+
+        if (optionIndex < 1 || optionIndex > (int)rows.size()) {
+            // Show numbered list for the user to pick a valid index
+            setColor(14);
+            cout << "\nAvailable Personal Loan Options:\n\n";
+            setColor(8);
+            cout << "Idx  Loan Amount     Installments   Interest   Processing Fee\n";
+            cout << "-------------------------------------------------------------\n";
+            for (int i = 0; i < (int)rows.size(); ++i) {
+                vector<string> f = parseLine(rows[i], '#');
+                if (f.size() >= 5) {
+                    setColor(10);
+                    cout << setw(4) << (i+1)
+                        << setw(15) << f[1]
+                        << setw(15) << f[2]
+                        << setw(12) << f[3]
+                        << setw(15) << f[4] << endl;
+                }
+            }
+            setColor(7);
+            file.close();
+            awaitingSelection = true;
+            return "\nEnter option number (e.g. 1):";
+        }
+
+        // valid selection -> store selectedOption as the loan amount (fields[1]) so installment branch can match
+        vector<string> selFields = parseLine(rows[optionIndex - 1], '#');
+        if (selFields.size() < 5) {
+            file.close();
+            awaitingSelection = false;
+            return "Selected option is malformed. Try another option.";
+        }
+
+        selectedOption = selFields[1]; // loan amount string (used for matching later)
+        setColor(11);
+        cout << "\n----------------------------------------------------------------\n";
+        setColor(14);
+        cout << "Selected Personal Loan Option:\n";
+        setColor(10);
+        cout << " Loan Amount: " << selFields[1] << "\n";
+        cout << " Installments: " << selFields[2] << "\n";
+        cout << " Interest Rate: " << selFields[3] << "\n";
+        cout << " Processing Fee: " << selFields[4] << "\n";
+        setColor(11);
+        cout << "----------------------------------------------------------------\n";
+        file.close();
+
+        awaitingInstallmentInput = true;
+        awaitingSelection = false;
+        return "\nEnter number of installments (e.g. 12, 24, 36) to view monthly schedule:";
+    }
+
     }
 
     // ----------------Initial Loan Type Selection ----------------
@@ -1196,6 +1322,12 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
         currentDataFile = "data/Scooter.txt";
         awaitingSelection = true;
         return "You are applying for a scooter loan. Please select make (Make 1):";
+    }
+    else if(target == "p"){
+        selectedLoanType = "personal";
+        currentDataFile = "data/Personal.txt";
+        awaitingSelection = true;
+        return "You are applying for a personal loan. Please select make (Make 1):";
     }
 
     // ---------------- Query Applications by CNIC ----------------

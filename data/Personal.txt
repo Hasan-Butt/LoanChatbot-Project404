@@ -1,0 +1,6 @@
+Category#Loan Amount#Installments#Interest Rate#Processing Fee
+Personal Loan#100,000#12#18%#2,000
+Personal Loan#200,000#24#19%#3,000
+Personal Loan#300,000#36#20%#5,000
+Personal Loan#500,000#48#21%#7,000
+Personal Loan#700,000#60#22%#10,000
