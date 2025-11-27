@@ -1,4 +1,3 @@
-
 /*
  * chatbot.cpp
  *
@@ -22,14 +21,9 @@
 #include <windows.h>
 #include <iomanip>
 #include "application.h"
-#include "general_conversation.h"
 #include <vector>
 #include <iostream>
 using namespace std;
-
-// Global conversation corpus - loaded once and reused
-static vector<ConversationPair> conversationCorpus;
-static bool corpusLoaded = false;
 
 vector<string> parseLine(const string& line, char delimiter) {
     vector<string> fields;
@@ -61,18 +55,17 @@ string ChatbotInput::readUserInput()
 
 string ChatbotInput::validateInput(string& input) {
     // TODO: Implement input validation
-
     while (check_spaces(input) || input == "") // only spaces or empty string
     {
         if (check_spaces(input))
         {
-            system("cls");
+            // system("cls");
             cout << "string contains only spaces! \n";
             getline(cin, input);
         }
         else
         {
-            system("cls");
+            // system("cls");
             cout << "empty string! \n";
             getline(cin, input);
         }
@@ -89,7 +82,6 @@ string ChatbotInput::validateInput(string& input) {
     while (i < input.length())
     {
         char c = input[i];
-
         c = tolower(c);
         input[i] = c;
         i++;
@@ -97,9 +89,9 @@ string ChatbotInput::validateInput(string& input) {
     return input;
 }
 
-int ChatbotInput::extractKeywords(const string& input, string keywords[], int maxKeywords) {
-    // TODO: Implement keyword extraction and return count
-}
+//int ChatbotInput::extractKeywords(const string& input, string keywords[], int maxKeywords) {
+//    // TODO: Implement keyword extraction and return count
+//}
 
 // -----------------------------------------------
 // Personal Information
@@ -120,7 +112,6 @@ string ChatbotInput::getFullName() {
         setColor(COLOR_WHITE);
     }
 }
-
 
 
 string ChatbotInput::getFatherName() {
@@ -152,7 +143,6 @@ string ChatbotInput::getContactNumber() {
         phone = readUserInput();
 
         if (isValidPhone(phone)) {
-
             return phone;
         }
 
@@ -213,7 +203,6 @@ string ChatbotInput::getMaritalStatus() {
             if (lower == "d") return "Divorced";
             if (lower == "w") return "Widowed";
             // Capitalize first letter
-
             status[0] = toupper(status[0]);
             return status;
         }
@@ -304,7 +293,6 @@ string ChatbotInput::getEmploymentStatus() {
 
         string lower = toLowerString(status);
         if (lower == "salaried") return "Salaried";
-
         if (lower == "business") return "Business";
         if (lower == "self-employed" || lower == "self employed") return "Self-Employed";
         if (lower == "unemployed") return "Unemployed";
@@ -335,7 +323,6 @@ long long ChatbotInput::getAnnualIncome() {
         }
         else {
             cin.ignore();
-
             return x;
         }
     }
@@ -398,7 +385,6 @@ long long ChatbotInput::getExistingLoanAmount() {
     cin >> x;
     cin.ignore();
     return x;
-
 }
 
 long long ChatbotInput::getAmountReturned() {
@@ -462,7 +448,6 @@ string ChatbotInput::getReferenceCNIC(int refIndex) {
 }
 
 string ChatbotInput::getReferenceDate(int refIndex) {
-
     string date;
     while (true) {
         cout << "Enter Reference " << refIndex << " Date (DD-MM-YYYY): ";
@@ -514,37 +499,191 @@ string ChatbotInput::getReferenceEmail(int refIndex) {
 // File Uploads (Paths Only)
 // -----------------------------------------------
 
-string ChatbotInput::getCNICFrontPath() {
+
+// AYUB BUTT'S CODE 
+
+
+string ChatbotInput::getCNICFrontPath(const string& userID) {
     cout << "Enter CNIC Front Image Path: ";
-    return readUserInput();
+    string input;
+    getline(cin, input);
+    while (!isValidPath(input, userID))
+    {
+        getline(cin, input);
+    }
+    return input;
 }
 
-string ChatbotInput::getCNICBackPath() {
+string ChatbotInput::getCNICBackPath(const string& userID) {
     cout << "Enter CNIC Back Image Path: ";
-    return readUserInput();
+    string input;
+    getline(cin, input);
+    while (!isValidPath(input, userID))
+    {
+        getline(cin, input);
+    }
+    return input;
 }
 
-string ChatbotInput::getElectricityBillPath() {
+string ChatbotInput::getElectricityBillPath(const string& userID) {
     cout << "Enter Electricity Bill Image Path: ";
-
-    return readUserInput();
+    string input;
+    getline(cin, input);
+    while (!isValidPath(input, userID))
+    {
+        getline(cin, input);
+    }
+    return input;
 }
 
-string ChatbotInput::getSalarySlipPath() {
+string ChatbotInput::getSalarySlipPath(const string& userID) {
     cout << "Enter Salary Slip Image Path: ";
-    return readUserInput();
+    string input;
+    getline(cin, input);
+    while (!isValidPath(input, userID))
+    {
+        getline(cin, input);
+    }
+    return input;
 }
 
-// LP4-25 - Fixed generateMonthlyPlan function
-void generateMonthlyPlan(long long loanAmount, long long downPayment, int months, string startMonth, int startYear) {
-   // Add validation for months to prevent divide-by-zero
-    if (months <= 0) {
-        setColor(COLOR_RED);
-        cout << "Error: Number of installments must be greater than 0.\n";
-        setColor(COLOR_WHITE);
-        return;
+string startLoanApplication() {
+    system("cls");
+    setColor(COLOR_CYAN);
+    cout << "\n====================================================\n";
+    cout << "          LOAN APPLICATION FORM                     \n";
+    cout << "====================================================\n\n";
+    setColor(COLOR_WHITE);
+
+    Application app;
+    ChatbotInput input;
+    ChatbotDisplay display;
+    ChatbotStorage storage;
+
+    // Application Base Info
+    app.applicationID = generateApplicationID();
+    app.status = "Pending";      // Your struct has only "status"
+
+    cout << "Application ID: " << app.applicationID << "\n\n";
+
+    // ===== SECTION 1: PERSONAL INFO =====
+    setColor(COLOR_YELLOW);
+    cout << "\n--- Personal Information ---\n";
+    setColor(COLOR_WHITE);
+
+    app.fullName = input.getFullName();
+    app.fatherName = input.getFatherName();
+    app.postalAddress = input.getPostalAddress();
+    app.contactNumber = input.getContactNumber();
+    app.email = input.getEmail();
+    app.gender = input.getGender();
+    app.maritalStatus = input.getMaritalStatus();
+    app.dependents = input.getDependents();
+
+    // ===== SECTION 2: CNIC & EMPLOYMENT =====
+    setColor(COLOR_YELLOW);
+    cout << "\n--- CNIC & Employment Information ---\n";
+    setColor(COLOR_WHITE);
+
+    app.CNIC = input.getCNIC();
+    app.CNICExpiry = input.getCNICExpiry();
+    app.employmentStatus = input.getEmploymentStatus();
+
+    // ===== SECTION 3: FINANCIAL INFO =====
+    setColor(COLOR_YELLOW);
+    cout << "\n--- Financial Information ---\n";
+    setColor(COLOR_WHITE);
+
+    app.annualIncome = input.getAnnualIncome();
+    app.avgBill = input.getAvgBill();
+    app.currentMonthBill = input.getCurrentMonthBill();
+
+    // ===== SECTION 4: EXISTING LOAN =====
+    setColor(COLOR_YELLOW);
+    cout << "\n--- Existing Loan Information ---\n";
+    setColor(COLOR_WHITE);
+
+    app.hasExistingLoan = input.askHasExistingLoan();
+
+    if (app.hasExistingLoan) {
+        app.existingLoanAmount = input.getExistingLoanAmount();
+        app.amountReturned = input.getAmountReturned();
+        app.amountDue = input.getAmountDue();
+        app.existingLoanBank = input.getExistingLoanBank();
+        app.existingLoanCategory = input.getExistingLoanCategory();
+    }
+    else {
+        app.existingLoanAmount = 0;
+        app.amountReturned = 0;
+        app.amountDue = 0;
+        app.existingLoanBank = "N/A";
+        app.existingLoanCategory = "N/A";
     }
 
+    // ===== SECTION 5: REFERENCES =====
+    setColor(COLOR_YELLOW);
+    cout << "\n--- Reference Information ---\n";
+    setColor(COLOR_WHITE);
+
+    app.referenceName[0] = input.getReferenceName(1);
+    app.referenceCNIC[0] = input.getReferenceCNIC(1);
+    app.referenceDate[0] = input.getReferenceDate(1);
+    app.referencePhone[0] = input.getReferencePhone(1);
+    app.referenceEmail[0] = input.getReferenceEmail(1);
+
+    app.referenceName[1] = input.getReferenceName(2);
+    app.referenceCNIC[1] = input.getReferenceCNIC(2);
+    app.referenceDate[1] = input.getReferenceDate(2);
+    app.referencePhone[1] = input.getReferencePhone(2);
+    app.referenceEmail[1] = input.getReferenceEmail(2);
+
+    // now where will you check that these people are same? the function is provided in UTILS.H
+
+    // ===== SECTION 6: DOCUMENTS =====
+    setColor(COLOR_YELLOW);
+    cout << "\n--- Document Upload ---\n";
+    setColor(COLOR_WHITE);
+
+    app.CNICFrontPath = input.getCNICFrontPath(app.applicationID);
+    app.CNICBackPath = input.getCNICBackPath(app.applicationID);
+    app.electricityBillPath = input.getElectricityBillPath(app.applicationID);
+    app.salarySlipPath = input.getSalarySlipPath(app.applicationID);
+
+    // ===== CONFIRMATION =====
+    system("cls");
+
+    display.showApplicationSummary(app);
+
+    cout << "\n\nDo you want to submit this application? (yes/no): ";
+    string confirm = input.readUserInput();
+
+    if (toLowerString(confirm) == "yes" || toLowerString(confirm) == "y") {
+        if (storage.saveApplicationToFile(app)) {
+            setColor(COLOR_GREEN);
+            cout << "\n====================================================\n";
+            cout << "  APPLICATION SUBMITTED SUCCESSFULLY!              \n";
+            cout << "  Application ID: " << app.applicationID << "\n";
+            cout << "  Status: Pending Review                           \n";
+            cout << "====================================================\n";
+            setColor(COLOR_WHITE);
+            return "Your loan application has been submitted successfully! Application ID: " + app.applicationID;
+        }
+        else {
+            setColor(COLOR_RED);
+            cout << "\nERROR: Failed to save application!\n";
+            setColor(COLOR_WHITE);
+            return "Error: Failed to submit application. Please try again.";
+        }
+    }
+    else {
+        setColor(COLOR_YELLOW);
+        cout << "\nApplication cancelled.\n";
+        setColor(COLOR_WHITE);
+        return "Application cancelled. You can start again anytime.";
+    }
+}
+// Generate monthly payment plan
+void generateMonthlyPlan(long long loanAmount, long long downPayment, int months, string startMonth, int startYear) {
     long long principal = loanAmount - downPayment;
     long long monthlyPayment = principal / months;
     long long remaining = principal;
@@ -555,7 +694,6 @@ void generateMonthlyPlan(long long loanAmount, long long downPayment, int months
     int currentMonth = 0;
     // Convert startMonth to index
     for (int i = 0; i < 12; i++) {
-
         if (toLowerString(startMonth) == toLowerString(monthNames[i])) {
             currentMonth = i;
             break;
@@ -582,8 +720,8 @@ void generateMonthlyPlan(long long loanAmount, long long downPayment, int months
         << setw(20) << "Total Paid"
         << setw(20) << "Remaining" << "\n";
     setColor(COLOR_CYAN);
-    cout << "--------------------------------------------------------------------\n";
-        setColor(COLOR_WHITE);
+    cout << "------------------------------------------------------------\n";
+    setColor(COLOR_WHITE);
 
     for (int i = 1; i <= months; i++) {
         long long paid = monthlyPayment * i;
@@ -605,13 +743,12 @@ void generateMonthlyPlan(long long loanAmount, long long downPayment, int months
     }
 
     setColor(COLOR_CYAN);
-    cout << "====================================================================\n";
+    cout << "============================================================\n";
     setColor(COLOR_WHITE);
 }
 
 bool QueryApplication(string target) {
     if (target.find("my applications") != string::npos ||
-
         target.find("application status") != string::npos ||
         target.find("check application") != string::npos) {
 
@@ -669,7 +806,6 @@ string viewMonthlyPlan(string target) {
         // Ask for loan details
         cout << "Enter Loan Amount: ";
         long long loanAmount;
-
         cin >> loanAmount;
         cin.ignore();
 
@@ -696,501 +832,18 @@ string viewMonthlyPlan(string target) {
     }
     return "";
 }
-
-// LP4-26 - Fixed startLoanApplication function
-string startLoanApplication() {
-    system("cls");
-    setColor(COLOR_CYAN);
-    cout << "\n====================================================\n";
-    cout << "          LOAN APPLICATION FORM                     \n";
-    cout << "====================================================\n\n";
-    setColor(COLOR_WHITE);
-    
-    Application app;
-    ChatbotInput input;
-    ChatbotDisplay display;
-    ChatbotStorage storage;
-    
-    // Initialize application
-    app.applicationID = generateApplicationID();
-    app.status = "Pending";
-    app.checkpoint = "";  // Will be set at each checkpoint
-    
-    // Initialize all fields to default values
-    app.dependents = 0;
-    app.annualIncome = 0;
-    app.avgBill = 0;
-    app.currentMonthBill = 0;
-    app.hasExistingLoan = false;
-    app.existingLoanAmount = 0;
-    app.amountReturned = 0;
-    app.amountDue = 0;
-    
-    cout << "Application ID: " << app.applicationID << "\n";
-    cout << "Please save this ID to resume later if needed.\n\n";
-    
-    // ===== CHECKPOINT 1: PERSONAL INFORMATION =====
-    setColor(COLOR_YELLOW);
-    cout << "\n=== Checkpoint 1/4: Personal Information ===\n";
-    setColor(COLOR_WHITE);
-    
-    app.fullName = input.getFullName();
-    app.fatherName = input.getFatherName();
-    app.postalAddress = input.getPostalAddress();
-    app.contactNumber = input.getContactNumber();
-    app.email = input.getEmail();
-    app.CNIC = input.getCNIC();
-    app.CNICExpiry = input.getCNICExpiry();
-    app.employmentStatus = input.getEmploymentStatus();
-    app.maritalStatus = input.getMaritalStatus();
-    app.gender = input.getGender();
-    app.dependents = input.getDependents();
-    
-    // Save checkpoint C1
-    app.checkpoint = "C1";
-    if (!storage.saveApplicationToFile(app)) {
-        setColor(COLOR_RED);
-        cout << "Error saving checkpoint!\n";
-        setColor(COLOR_WHITE);
-        return "Error: Failed to save progress.";
-    }
-    
-    setColor(COLOR_GREEN);
-    cout << "\n✓ Checkpoint 1 saved! You can resume later with ID: " << app.applicationID << "\n";
-    setColor(COLOR_WHITE);
-    
-    cout << "\nPress Enter to continue to Financial Information...";
-    cin.get();
-    
-    // ===== CHECKPOINT 2: FINANCIAL INFORMATION =====
-    setColor(COLOR_YELLOW);
-    cout << "\n=== Checkpoint 2/4: Financial Information ===\n";
-    setColor(COLOR_WHITE);
-    
-    app.annualIncome = input.getAnnualIncome();
-    app.avgBill = input.getAvgBill();
-    app.currentMonthBill = input.getCurrentMonthBill();
-    
-    cout << "\n--- Existing Loan Information ---\n";
-    app.hasExistingLoan = input.askHasExistingLoan();
-    
-    if (app.hasExistingLoan) {
-        app.existingLoanAmount = input.getExistingLoanAmount();
-        app.amountReturned = input.getAmountReturned();
-        app.amountDue = input.getAmountDue();
-        app.existingLoanBank = input.getExistingLoanBank();
-        app.existingLoanCategory = input.getExistingLoanCategory();
-    } else {
-        app.existingLoanAmount = 0;
-        app.amountReturned = 0;
-        app.amountDue = 0;
-        app.existingLoanBank = "N/A";
-        app.existingLoanCategory = "N/A";
-    }
-    
-    // Save checkpoint C2
-    app.checkpoint = "C2";
-    if (!storage.saveApplicationToFile(app)) {
-        setColor(COLOR_RED);
-        cout << "Error saving checkpoint!\n";
-        setColor(COLOR_WHITE);
-        return "Error: Failed to save progress.";
-    }
-    
-    setColor(COLOR_GREEN);
-    cout << "\n✓ Checkpoint 2 saved!\n";
-    setColor(COLOR_WHITE);
-    
-    cout << "\nPress Enter to continue to References...";
-    cin.get();
-    
-    // ===== CHECKPOINT 3: REFERENCES =====
-    setColor(COLOR_YELLOW);
-    cout << "\n=== Checkpoint 3/4: Reference Information ===\n";
-    setColor(COLOR_WHITE);
-    
-    cout << "\n--- Reference 1 ---\n";
-    app.referenceName[0] = input.getReferenceName(1);
-    app.referenceCNIC[0] = input.getReferenceCNIC(1);
-    app.referenceDate[0] = input.getReferenceDate(1);
-    app.referencePhone[0] = input.getReferencePhone(1);
-    app.referenceEmail[0] = input.getReferenceEmail(1);
-    
-    cout << "\n--- Reference 2 ---\n";
-    app.referenceName[1] = input.getReferenceName(2);
-    app.referenceCNIC[1] = input.getReferenceCNIC(2);
-    app.referenceDate[1] = input.getReferenceDate(2);
-    app.referencePhone[1] = input.getReferencePhone(2);
-    app.referenceEmail[1] = input.getReferenceEmail(2);
-    
-    // Save checkpoint C3
-    app.checkpoint = "C3";
-    if (!storage.saveApplicationToFile(app)) {
-        setColor(COLOR_RED);
-        cout << "Error saving checkpoint!\n";
-        setColor(COLOR_WHITE);
-        return "Error: Failed to save progress.";
-    }
-    
-    setColor(COLOR_GREEN);
-    cout << "\n✓ Checkpoint 3 saved!\n";
-    setColor(COLOR_WHITE);
-    
-    cout << "\nPress Enter to continue to Documents...";
-    cin.get();
-    
-    // ===== SECTION 4: DOCUMENTS (Before Final Submission) =====
-    setColor(COLOR_YELLOW);
-    cout << "\n=== Section 4/4: Document Upload ===\n";
-    setColor(COLOR_WHITE);
-    
-    app.CNICFrontPath = input.getCNICFrontPath();
-    app.CNICBackPath = input.getCNICBackPath();
-    app.electricityBillPath = input.getElectricityBillPath();
-    app.salarySlipPath = input.getSalarySlipPath();
-    
-    // ===== FINAL CONFIRMATION =====
-    system("cls");
-    display.showApplicationSummary(app);
-    
-    cout << "\n\nDo you want to submit this application? (yes/no): ";
-    string confirm = input.readUserInput();
-    
-    if (toLowerString(confirm) == "yes" || toLowerString(confirm) == "y") {
-        // Mark as submitted
-        app.checkpoint = "Submitted";
-        app.status = "Pending Review";
-        
-        if (storage.saveApplicationToFile(app)) {
-            setColor(COLOR_GREEN);
-            cout << "\n====================================================\n";
-            cout << "  APPLICATION SUBMITTED SUCCESSFULLY!              \n";
-            cout << "  Application ID: " << app.applicationID << "\n";
-            cout << "  Status: " << app.status << "\n";
-            cout << "====================================================\n";
-            setColor(COLOR_WHITE);
-            return "Application submitted successfully! ID: " + app.applicationID;
-        } else {
-            setColor(COLOR_RED);
-            cout << "\nERROR: Failed to save application!\n";
-            setColor(COLOR_WHITE);
-            return "Error: Failed to submit application.";
-        }
-    } else {
-        setColor(COLOR_YELLOW);
-        cout << "\nApplication not submitted. Current progress saved at Checkpoint 3.\n";
-        setColor(COLOR_WHITE);
-        return "Application saved. You can resume later with ID: " + app.applicationID;
-    }
-}
-
-// LP4-27 - Fixed resumeApplication function
-string resumeApplication() {
-    system("cls");
-    setColor(COLOR_CYAN);
-    cout << "\n====================================================\n";
-    cout << "          RESUME APPLICATION                        \n";
-    cout << "====================================================\n\n";
-    setColor(COLOR_WHITE);
-    
-    ChatbotInput input;
-    ChatbotStorage storage;
-    ChatbotDisplay display;
-    
-    // Get Application ID
-    cout << "Enter Application ID: ";
-    string appID = input.readUserInput();
-    
-    // Get CNIC
-    cout << "Enter CNIC (13 digits): ";
-    string cnic = input.readUserInput();
-    
-    // Normalize CNIC (remove dashes)
-    string cleanCNIC = "";
-    for (char c : cnic) {
-        if (c >= '0' && c <= '9') {
-            cleanCNIC += c;
-        }
-    }
-    
-    // Load application
-    Application app = storage.getApplicationByID(appID);
-    
-    // Check if exists
-    if (app.applicationID.empty()) {
-        setColor(COLOR_RED);
-        cout << "\nApplication not found!\n";
-        setColor(COLOR_WHITE);
-        return "Application ID not found.";
-    }
-    
-    // Verify CNIC
-    string appCNICClean = "";
-    for (char c : app.CNIC) {
-        if (c >= '0' && c <= '9') {
-            appCNICClean += c;
-        }
-    }
-    
-    if (appCNICClean != cleanCNIC) {
-        setColor(COLOR_RED);
-        cout << "\nCNIC does not match!\n";
-        setColor(COLOR_WHITE);
-        return "CNIC verification failed.";
-    }
-    
-    // Check if already submitted
-    if (app.checkpoint == "Submitted") {
-        setColor(COLOR_RED);
-        cout << "\nThis application has already been submitted!\n";
-        cout << "Status: " << app.status << "\n";
-        cout << "You cannot modify submitted applications.\n";
-        setColor(COLOR_WHITE);
-        return "Application already submitted.";
-    }
-    
-    // Show current progress
-    setColor(COLOR_GREEN);
-    cout << "\nApplication found!\n";
-    setColor(COLOR_WHITE);
-    cout << "Current Checkpoint: " << app.checkpoint << "\n\n";
-    
-    display.showApplicationSummary(app);
-    
-    cout << "\nDo you want to continue? (yes/no): ";
-    string confirm = input.readUserInput();
-    
-    if (toLowerString(confirm) != "yes" && toLowerString(confirm) != "y") {
-        return "Resume cancelled.";
-    }
-    
-    // Resume from checkpoint
-    if (app.checkpoint == "C1") {
-        setColor(COLOR_YELLOW);
-        cout << "\nResuming from Checkpoint 2: Financial Information\n";
-        setColor(COLOR_WHITE);
-        
-        // Continue with C2
-        app.annualIncome = input.getAnnualIncome();
-        app.avgBill = input.getAvgBill();
-        app.currentMonthBill = input.getCurrentMonthBill();
-        
-        cout << "\n--- Existing Loan Information ---\n";
-        app.hasExistingLoan = input.askHasExistingLoan();
-        
-        if (app.hasExistingLoan) {
-            app.existingLoanAmount = input.getExistingLoanAmount();
-            app.amountReturned = input.getAmountReturned();
-            app.amountDue = input.getAmountDue();
-            app.existingLoanBank = input.getExistingLoanBank();
-            app.existingLoanCategory = input.getExistingLoanCategory();
-        } else {
-            app.existingLoanAmount = 0;
-            app.amountReturned = 0;
-            app.amountDue = 0;
-            app.existingLoanBank = "N/A";
-            app.existingLoanCategory = "N/A";
-        }
-        
-        app.checkpoint = "C2";
-        storage.saveApplicationToFile(app);
-        
-        setColor(COLOR_GREEN);
-        cout << "\n✓ Checkpoint 2 saved!\n";
-        setColor(COLOR_WHITE);
-        cout << "\nPress Enter to continue...";
-        cin.get();
-    }
-    
-    if (app.checkpoint == "C2" || app.checkpoint == "C1") {
-        setColor(COLOR_YELLOW);
-        cout << "\nContinuing to Checkpoint 3: References\n";
-        setColor(COLOR_WHITE);
-        
-        cout << "\n--- Reference 1 ---\n";
-        app.referenceName[0] = input.getReferenceName(1);
-        app.referenceCNIC[0] = input.getReferenceCNIC(1);
-        app.referenceDate[0] = input.getReferenceDate(1);
-        app.referencePhone[0] = input.getReferencePhone(1);
-        app.referenceEmail[0] = input.getReferenceEmail(1);
-        
-        cout << "\n--- Reference 2 ---\n";
-        app.referenceName[1] = input.getReferenceName(2);
-        app.referenceCNIC[1] = input.getReferenceCNIC(2);
-        app.referenceDate[1] = input.getReferenceDate(2);
-        app.referencePhone[1] = input.getReferencePhone(2);
-        app.referenceEmail[1] = input.getReferenceEmail(2);
-        
-        app.checkpoint = "C3";
-        storage.saveApplicationToFile(app);
-        
-        setColor(COLOR_GREEN);
-        cout << "\n✓ Checkpoint 3 saved!\n";
-        setColor(COLOR_WHITE);
-        cout << "\nPress Enter to continue...";
-        cin.get();
-    }
-    
-    if (app.checkpoint == "C3" || app.checkpoint == "C2" || app.checkpoint == "C1") {
-        setColor(COLOR_YELLOW);
-        cout << "\nFinal Section: Documents\n";
-        setColor(COLOR_WHITE);
-        
-        app.CNICFrontPath = input.getCNICFrontPath();
-        app.CNICBackPath = input.getCNICBackPath();
-        app.electricityBillPath = input.getElectricityBillPath();
-        app.salarySlipPath = input.getSalarySlipPath();
-        
-        // Final confirmation
-        system("cls");
-        display.showApplicationSummary(app);
-        
-        cout << "\n\nSubmit application now? (yes/no): ";
-        string submit = input.readUserInput();
-        
-        if (toLowerString(submit) == "yes" || toLowerString(submit) == "y") {
-            app.checkpoint = "Submitted";
-            app.status = "Pending Review";
-            
-            if (storage.saveApplicationToFile(app)) {
-                setColor(COLOR_GREEN);
-                cout << "\n====================================================\n";
-                cout << "  APPLICATION SUBMITTED SUCCESSFULLY!              \n";
-                cout << "  Application ID: " << app.applicationID << "\n";
-                cout << "====================================================\n";
-                setColor(COLOR_WHITE);
-                return "Application submitted successfully!";
-            }
-        } else {
-            setColor(COLOR_YELLOW);
-            cout << "\nProgress saved. You can resume later.\n";
-            setColor(COLOR_WHITE);
-            return "Progress saved at Checkpoint 3.";
-        }
-    }
-    
-    return "Application resumed successfully.";
-}
-
 // ---------------------------------Chatbot Response Processing Module----------------------------
-
 // LP4-8 Assigned to Kabeer
 
 string ChatbotProcessor::generateResponse(const string& input, string filename) {
-   static string selectedLoanType = ""; // "home", "car", or "scooter"
+    static string selectedLoanType = ""; // "home", "car", or "scooter"
     static string selectedOption = "";   // stores selected make/model/area
     static bool awaitingInstallmentInput = false;
     static bool awaitingSelection = false;
     static string currentDataFile = "";
     static bool askToApply = false;
-    static bool awaitingConversationConfirmation = false;
-    static string pendingConversationInput = "";
-    static bool inConversationMode = false;  // NEW: Track if we're in conversation mode
 
     string target = toLowerString(trimString(input));
-
-    // ----------------Handle conversation mode confirmation ----------------
-    if (awaitingConversationConfirmation) {
-        string low = toLowerString(target);
-        if (low == "yes" || low == "y") {
-            awaitingConversationConfirmation = false;
-            inConversationMode = true;  // Enable conversation mode
-            
-            // Load corpus on first use
-            if (!corpusLoaded) {
-                setColor(COLOR_YELLOW);
-                cout << "\n[Loading conversation database...";
-                conversationCorpus = loadConversationCorpus("data/human_chat_corpus.txt");
-                cout << " Done!]\n";
-                setColor(COLOR_WHITE);
-                corpusLoaded = true;
-            }
-            
-            // Find best matching response using IoU for the ORIGINAL input
-            string response = findBestMatchFromCorpus(pendingConversationInput, conversationCorpus);
-            
-            // Visual indicator that we're in conversation mode
-            setColor(COLOR_GREEN);
-            cout << "\n[💬 Conversation Mode - Type 'exit conversation' or use loan commands to return]\n";
-            setColor(COLOR_WHITE);
-            
-            pendingConversationInput = ""; // Clear pending input
-            return response;
-        }
-        else if (low == "no" || low == "n") {
-            awaitingConversationConfirmation = false;
-            pendingConversationInput = "";
-            
-            // Return wildcard response from file
-            ifstream file(filename);
-            if (file.is_open()) {
-                string line;
-                while (getline(file, line)) {
-                    int pos = line.find('#');
-                    if (pos == -1) continue;
-                    
-                    string storedInput = line.substr(0, pos);
-                    string response = line.substr(pos + 1);
-                    string key = toLowerString(trimString(storedInput));
-                    
-                    if (key == "*") {
-                        file.close();
-                        return trimString(response);
-                    }
-                }
-                file.close();
-            }
-            
-            return "I'm sorry, I didn't understand that. Please try again.";
-        }
-        else {
-            return "Please enter YES to start conversation mode, or NO for standard response.";
-        }
-    }
-
-    // ----------------Check if user wants to exit conversation mode ----------------
-    if (inConversationMode) {
-        // Check for exit commands
-        if (target.find("exit conversation") != string::npos || 
-            target.find("quit chat") != string::npos ||
-            target.find("stop chatting") != string::npos ||
-            target.find("leave conversation") != string::npos ||
-            target == "exit" || target == "quit" || target == "stop") {
-            inConversationMode = false;
-            setColor(COLOR_YELLOW);
-            cout << "\n[Exiting Conversation Mode - Returning to Loan Services]\n";
-            setColor(COLOR_WHITE);
-            return "You've exited conversation mode. How can I help you with loan services?";
-        }
-        
-        // Check for loan-related commands to auto-exit conversation mode
-        if (target == "h" || target == "c" || target == "s" || target == "a" ||
-            target.find("home loan") != string::npos ||
-            target.find("car loan") != string::npos ||
-            target.find("scooter loan") != string::npos ||
-            target.find("application") != string::npos ||
-            target.find("monthly plan") != string::npos ||
-            target.find("payment plan") != string::npos ||
-            target.find("resume") != string::npos ||
-            target.find("continue") != string::npos) {
-            
-            inConversationMode = false;
-            setColor(COLOR_YELLOW);
-            cout << "\n[Auto-exiting Conversation Mode - Processing loan request]\n";
-            setColor(COLOR_WHITE);
-            // Continue processing below (don't return yet)
-        }
-        else {
-            // Stay in conversation mode - process input
-            string response = findBestMatchFromCorpus(target, conversationCorpus);
-            
-            setColor(COLOR_GREEN);
-            cout << "[💬 Conversation Mode] ";
-            setColor(COLOR_WHITE);
-            
-            return response;
-        }
-    }
 
     // ----------------Handle loan application response ----------------
     if (askToApply) {
@@ -1394,6 +1047,7 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
             selectedOption = "Area " + input;
         }
         else if (selectedLoanType == "car" || selectedLoanType == "scooter") {
+            // Convert "1" -> "Make 1", "2" -> "Make 2"
             selectedOption = "Make " + input;
         }
         else {
@@ -1554,82 +1208,7 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
         return monthlyPlanResponse;
     }
 
-    // ---------------- Handle Resume Application Command ----------------
-    if (target.find("resume") != string::npos || target.find("continue") != string::npos || target.find("unfinished") != string::npos) {
-        return resumeApplication();
-    }
-
-    // -------------------- General Conversation Mode with Confirmation --------------------
-    // Check if user is trying to have a general conversation
-    bool isConversationTrigger = false;
-    
-    // Check for conversation keywords
-    if (target.find("chat") != string::npos || 
-        target.find("talk") != string::npos ||
-        target.find("conversation") != string::npos ||
-        target == "hi" || target == "hello" || target == "hey" ||
-        target == "sup" || target == "wassup" || target == "how are you" ||
-        target == "hows it going" || target == "whats up") {
-        isConversationTrigger = true;
-    }
-    
-    // Also check if we're NOT in any loan flow and input doesn't match loan keywords
-    if (!awaitingSelection && !awaitingInstallmentInput && !askToApply) {
-        // If input doesn't look like a loan command, try conversation
-        if (target != "a" && target != "h" && target != "c" && 
-            target != "s" && target != "p" && target != "x" &&
-            target.find("application") == string::npos &&
-            target.find("monthly plan") == string::npos &&
-            target.find("payment plan") == string::npos) {
-            isConversationTrigger = true;
-        }
-    }
-    
-    // NEW: Prompt user before entering conversation mode
-    if (isConversationTrigger && !inConversationMode) {  // Only prompt if not already in conversation mode
-        // First check if there's an exact match in the knowledge base
-        ifstream file(filename);
-        bool foundExactMatch = false;
-        
-        if (file.is_open()) {
-            string line;
-            while (getline(file, line)) {
-                int pos = line.find('#');
-                if (pos == -1) continue;
-                
-                string storedInput = line.substr(0, pos);
-                string key = toLowerString(trimString(storedInput));
-                
-                if (key == target && key != "" && key != "*") {
-                    foundExactMatch = true;
-                    string response = line.substr(pos + 1);
-                    file.close();
-                    return trimString(response);
-                }
-            }
-            file.close();
-        }
-        
-        // If no exact match, prompt for conversation mode
-        if (!foundExactMatch) {
-            awaitingConversationConfirmation = true;
-            pendingConversationInput = target;
-            
-            setColor(COLOR_YELLOW);
-            string prompt = "\n╔════════════════════════════════════════════════════════════╗\n";
-            prompt +=         "║  🤖   Your input matches general conversation.             ║\n";
-            prompt +=         "║                                                            ║\n";
-            prompt +=         "║  Would you like to enter Conversation Mode?                ║\n";
-            prompt +=         "║  (You can chat casually until you use loan commands)       ║\n";
-            prompt +=         "╚════════════════════════════════════════════════════════════╝\n";
-            prompt += "\n👉 Enter YES to chat, or NO for standard response: ";
-            setColor(COLOR_WHITE);
-            
-            return prompt;
-        }
-    }
-
-    // ---------------------Generic Response Handling --------------------
+    // ---------------- Generic Response Handling ----------------
     ifstream file(filename);
     if (!file.is_open()) {
         cerr << "Error: Could not open file " << filename << endl;
@@ -1664,6 +1243,18 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
 }
 
 
+//string ChatbotProcessor::analyzeIntent(const string& input) {
+//    // TODO: Implement intent/sentiment analysis
+//}
+//
+//string ChatbotProcessor::processLoanQuery(const string keywords[], int keywordCount) {
+//    // TODO: Implement loan query handling
+//}
+//
+//string ChatbotProcessor::getContextInfo(const string& query) {
+//    // TODO: Implement context retrieval
+//}
+
 // --------------------------------------Display/Output Module--------------------------------------
 // LP4-9 Assigned to Hasan
 
@@ -1685,7 +1276,6 @@ void ChatbotDisplay::showWelcomeMessage() {
     system("cls");
 
     // Title
-
     setColor(COLOR_CYAN);
     cout << "\n";
     cout << "  ======================================================\n";
@@ -1714,7 +1304,6 @@ void ChatbotDisplay::showWelcomeMessage() {
 
     cout << "\n\n";
 
-
     // Progress bar animation
     setColor(COLOR_GREEN);
     cout << "          [";
@@ -1742,7 +1331,6 @@ void ChatbotDisplay::showWelcomeMessage() {
 
     setColor(COLOR_CYAN);
     cout << "  ======================================================\n\n";
-
 
     setColor(COLOR_YELLOW);
     cout << "          Press any key to start chatting...\n";
@@ -1774,7 +1362,6 @@ void ChatbotDisplay::showApplicationSummary(Application& app)
 
     cout << "---- CNIC & Employment ----\n";
     cout << "CNIC:           " << app.CNIC << "\n";
-
     cout << "CNIC Expiry:    " << app.CNICExpiry << "\n";
     cout << "Employment:     " << app.employmentStatus << "\n\n";
 
@@ -1801,7 +1388,6 @@ void ChatbotDisplay::showApplicationSummary(Application& app)
         cout << "Ref " << (i + 1) << " Date:  " << app.referenceDate[i] << "\n";
         cout << "Ref " << (i + 1) << " Phone: " << app.referencePhone[i] << "\n";
         cout << "Ref " << (i + 1) << " Email: " << app.referenceEmail[i] << "\n";
-
     }
     cout << "\n---- Documents (paths) ----\n";
     cout << "CNIC Front:     " << app.CNICFrontPath << "\n";
@@ -1813,6 +1399,8 @@ void ChatbotDisplay::showApplicationSummary(Application& app)
     cout << "===========================================================\n\n";
     setColor(COLOR_WHITE);
 }
+
+
 void ChatbotDisplay::showError(const string& errorMessage) {
     // TODO: Display error messages
     setColor(COLOR_RED);
@@ -1831,9 +1419,9 @@ string ChatbotDisplay::formatOutput(const string& text) {
 
 // persist application to disk as a text file (returns true on success)
 bool ChatbotStorage::saveApplicationToFile(Application app)
-
 {
-   CreateDirectoryA("data", NULL);
+    // ensure directories exist (uses WinAPI)
+    CreateDirectoryA("data", NULL);
     CreateDirectoryA("data\\applications", NULL);
 
     string path = string("data\\applications\\") + app.applicationID + ".txt";
@@ -1841,10 +1429,8 @@ bool ChatbotStorage::saveApplicationToFile(Application app)
     if (!ofs.is_open()) return false;
 
     ofs << "ApplicationID:" << app.applicationID << "\n";
-    ofs << "Status:" << app.status << "\n";
-    ofs << "Checkpoint:" << app.checkpoint << "\n\n";
+    ofs << "Status:" << app.status << "\n\n";
 
-    // Personal Information
     ofs << "FullName:" << app.fullName << "\n";
     ofs << "FatherName:" << app.fatherName << "\n";
     ofs << "PostalAddress:" << app.postalAddress << "\n";
@@ -1858,7 +1444,6 @@ bool ChatbotStorage::saveApplicationToFile(Application app)
     ofs << "CNICExpiry:" << app.CNICExpiry << "\n";
     ofs << "EmploymentStatus:" << app.employmentStatus << "\n\n";
 
-    // Financial Information
     ofs << "AnnualIncome:" << app.annualIncome << "\n";
     ofs << "AvgBill:" << app.avgBill << "\n";
     ofs << "CurrentMonthBill:" << app.currentMonthBill << "\n\n";
@@ -1870,16 +1455,13 @@ bool ChatbotStorage::saveApplicationToFile(Application app)
     ofs << "ExistingLoanBank:" << app.existingLoanBank << "\n";
     ofs << "ExistingLoanCategory:" << app.existingLoanCategory << "\n\n";
 
-    // References
     for (int i = 0; i < 2; ++i) {
         ofs << "ReferenceName" << i << ":" << app.referenceName[i] << "\n";
-        ofs << "ReferenceCNIC"  << i << ":" << app.referenceCNIC[i] << "\n";
-        ofs << "ReferenceDate"  << i << ":" << app.referenceDate[i] << "\n";
+        ofs << "ReferenceCNIC" << i << ":" << app.referenceCNIC[i] << "\n";
+        ofs << "ReferenceDate" << i << ":" << app.referenceDate[i] << "\n";
         ofs << "ReferencePhone" << i << ":" << app.referencePhone[i] << "\n";
         ofs << "ReferenceEmail" << i << ":" << app.referenceEmail[i] << "\n";
     }
-    
-    // Documents
     ofs << "\nCNICFrontPath:" << app.CNICFrontPath << "\n";
     ofs << "CNICBackPath:" << app.CNICBackPath << "\n";
     ofs << "ElectricityBillPath:" << app.electricityBillPath << "\n";
@@ -1894,7 +1476,6 @@ int ChatbotStorage::countApplicationsByCNIC(const string& cnic, const string& st
     int count = 0;
 
     // Open applications directory
-
     WIN32_FIND_DATAA findData;
     HANDLE hFind = FindFirstFileA("data\\applications\\*.txt", &findData);
 
@@ -1926,7 +1507,6 @@ int ChatbotStorage::countApplicationsByCNIC(const string& cnic, const string& st
 
         // Check if CNIC matches
         if (fileCNIC == cnic) {
-
             // If status filter is empty, count all
             if (status.empty()) {
                 count++;
@@ -1958,7 +1538,6 @@ vector<Application> ChatbotStorage::getApplicationsByCNIC(const string& cnic) {
         string filename = findData.cFileName;
         string filepath = "data\\applications\\" + filename;
 
-
         ifstream file(filepath);
         if (!file.is_open()) continue;
 
@@ -1985,7 +1564,6 @@ vector<Application> ChatbotStorage::getApplicationsByCNIC(const string& cnic) {
             apps.push_back(app);
         }
 
-
     } while (FindNextFileA(hFind, &findData));
 
     FindClose(hFind);
@@ -1996,18 +1574,17 @@ vector<Application> ChatbotStorage::getApplicationsByCNIC(const string& cnic) {
 Application ChatbotStorage::getApplicationByID(const string& appID) {
     Application app;
     string filepath = "data\\applications\\" + appID + ".txt";
-    
+
     ifstream file(filepath);
     if (!file.is_open()) {
-        app.applicationID = "";
+        app.applicationID = ""; // Empty means not found
         return app;
     }
-    
+
     string line;
     while (getline(file, line)) {
         if (line.find("ApplicationID:") == 0) app.applicationID = line.substr(14);
         else if (line.find("Status:") == 0) app.status = line.substr(7);
-        else if (line.find("Checkpoint:") == 0) app.checkpoint = line.substr(11);
         else if (line.find("FullName:") == 0) app.fullName = line.substr(9);
         else if (line.find("FatherName:") == 0) app.fatherName = line.substr(11);
         else if (line.find("PostalAddress:") == 0) app.postalAddress = line.substr(14);
@@ -2028,6 +1605,7 @@ Application ChatbotStorage::getApplicationByID(const string& appID) {
         else if (line.find("AmountDue:") == 0) app.amountDue = stoll(line.substr(10));
         else if (line.find("ExistingLoanBank:") == 0) app.existingLoanBank = line.substr(17);
         else if (line.find("ExistingLoanCategory:") == 0) app.existingLoanCategory = line.substr(21);
+        // Parse references
         else if (line.find("ReferenceName0:") == 0) app.referenceName[0] = line.substr(15);
         else if (line.find("ReferenceCNIC0:") == 0) app.referenceCNIC[0] = line.substr(15);
         else if (line.find("ReferenceDate0:") == 0) app.referenceDate[0] = line.substr(15);
@@ -2038,16 +1616,16 @@ Application ChatbotStorage::getApplicationByID(const string& appID) {
         else if (line.find("ReferenceDate1:") == 0) app.referenceDate[1] = line.substr(15);
         else if (line.find("ReferencePhone1:") == 0) app.referencePhone[1] = line.substr(16);
         else if (line.find("ReferenceEmail1:") == 0) app.referenceEmail[1] = line.substr(16);
+        // Parse document paths
         else if (line.find("CNICFrontPath:") == 0) app.CNICFrontPath = line.substr(14);
         else if (line.find("CNICBackPath:") == 0) app.CNICBackPath = line.substr(13);
         else if (line.find("ElectricityBillPath:") == 0) app.electricityBillPath = line.substr(20);
         else if (line.find("SalarySlipPath:") == 0) app.salarySlipPath = line.substr(15);
     }
-    
+
     file.close();
     return app;
 }
-
 // --------------------------------------Testing and Debug Module-----------------------------------
 //LP4-10 Assigned to Haider
 
@@ -2079,7 +1657,6 @@ bool ChatbotTester::testInputProcessing()
         for (int i = 0; i < line.length(); i++)
         {
             if (line[i] == '#')
-
             {
                 found = 1;
                 string input = "";
@@ -2140,7 +1717,6 @@ bool ChatbotTester::testResponseGeneration()
             string sanitized = inputProcessor.validateInput(tmp);
 
             // Generate the chatbot response for the sanitized input
-
             ChatbotProcessor processor;
             string response = processor.generateResponse(sanitized);
 
@@ -2172,7 +1748,6 @@ bool ChatbotTester::validateResponse(const string& input, const string& expected
     string response = processor.generateResponse(input);
 
     if (response == expectedOutput)
-
     {
         setColor(COLOR_GREEN);
         cout << "PASS: " << input << " -> Correct" << endl;
@@ -2205,7 +1780,6 @@ bool ChatbotTester::testHomeLoanData()
     {
         cout << "ERROR: Cannot open data/Home.txt" << endl;
         return false;
-
     }
 
     // Skip first line (header)
@@ -2238,7 +1812,6 @@ bool ChatbotTester::testHomeLoanData()
                 else if (count == 4)
                 {
                     pos4 = i;
-
                 }
             }
         }
@@ -2271,7 +1844,6 @@ bool ChatbotTester::testHomeLoanData()
             }
 
             // Extract price (between third and fourth '#')
-
             for (int i = pos3 + 1; i < pos4; i++)
             {
                 price += line[i];

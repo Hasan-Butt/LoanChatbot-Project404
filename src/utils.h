@@ -1,10 +1,10 @@
 /*
  * utils.h
- * 
+ *
  * Description:
  * Header file declaring all helper functions for the LoanChatbot project.
  * Provides reusable utilities for input validation, range checks, loan calculations, and logging.
- * 
+ *
  * Responsibilities:
  * - Validate user inputs (numeric, non-empty)
  * - Check ranges for loan amounts, tenure, and interest rates
@@ -13,7 +13,9 @@
  */
 #ifndef UTILS_H
 #define UTILS_H
-
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 #include <string>
 #include <vector>
 using namespace std;
@@ -34,7 +36,7 @@ void setColor(int color);
 bool isNumber(const string& str);
 bool isNotEmpty(const string& str);
 int stringToInt(const string& str);
-bool check_spaces(string& input);
+bool check_spaces(const string& input);
 string trimString(string s);
 string toLowerString(string s);
 string removeCommas(string s);
@@ -48,9 +50,9 @@ bool isValidRate(double rate);
 double calculateSimpleInterest(double principal, double rate, double time);
 
 // Logging
-void logInteraction(const string& userInput, const string& botResponse);
+void logInteraction(const string& userInput, const string& botResponse, const string& appID);
 
- // ===== Implementing Validation and utilities EPIC LP4-22 Assigned to Ayub =====
+// ===== Implementing Validation and utilities EPIC LP4-22 Assigned to Ayub =====
 // ===== VALIDATION =====
 bool isValidCNIC(const string& cnic);
 bool isValidEmail(const string& email);
@@ -60,6 +62,14 @@ bool isNumeric(const string& str);
 bool isAlpha(const string& str);
 bool isAlphaNumeric(const string& str);
 
+bool isValidPath(string& input, const string& applicantID);
+bool isImageFile(const string& filepath);
+
+bool checkUserFolderAccess(const string& sourceDir);
+
+bool isRefreeSame(const Application& app);
+
+string removeSurroundingQuotes(string& inputPath);
 string generateApplicationID();
 string getCurrentDate();
 
