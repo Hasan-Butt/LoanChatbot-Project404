@@ -66,13 +66,13 @@ string ChatbotInput::validateInput(string& input) {
     {
         if (check_spaces(input))
         {
-            system("cls");
+          //  system("cls");
             cout << "string contains only spaces! \n";
             getline(cin, input);
         }
         else
         {
-            system("cls");
+           // system("cls");
             cout << "empty string! \n";
             getline(cin, input);
         }
@@ -97,9 +97,10 @@ string ChatbotInput::validateInput(string& input) {
     return input;
 }
 
-int ChatbotInput::extractKeywords(const string& input, string keywords[], int maxKeywords) {
-    // TODO: Implement keyword extraction and return count
-}
+// LATEST UPDATE WE DONT NEED IT !
+//int ChatbotInput::extractKeywords(const string& input, string keywords[], int maxKeywords) {
+//    // TODO: Implement keyword extraction and return count
+//}
 
 // -----------------------------------------------
 // Personal Information
@@ -514,25 +515,48 @@ string ChatbotInput::getReferenceEmail(int refIndex) {
 // File Uploads (Paths Only)
 // -----------------------------------------------
 
-string ChatbotInput::getCNICFrontPath() {
+string ChatbotInput::getCNICFrontPath(const string& userID) {
     cout << "Enter CNIC Front Image Path: ";
-    return readUserInput();
+    string input;
+    getline(cin, input);
+    while (!isValidPath(input, userID))
+    {
+        getline(cin, input);
+    }
+    return input;
 }
 
-string ChatbotInput::getCNICBackPath() {
+string ChatbotInput::getCNICBackPath(const string& userID) {
     cout << "Enter CNIC Back Image Path: ";
-    return readUserInput();
+    string input;
+    getline(cin, input);
+    while (!isValidPath(input, userID))
+    {
+        getline(cin, input);
+    }
+    return input;
 }
 
-string ChatbotInput::getElectricityBillPath() {
+string ChatbotInput::getElectricityBillPath(const string& userID) {
     cout << "Enter Electricity Bill Image Path: ";
-
-    return readUserInput();
+    string input;
+    getline(cin, input);
+    while (!isValidPath(input, userID))
+    {
+        getline(cin, input);
+    }
+    return input;
 }
 
-string ChatbotInput::getSalarySlipPath() {
+string ChatbotInput::getSalarySlipPath(const string& userID) {
     cout << "Enter Salary Slip Image Path: ";
-    return readUserInput();
+    string input;
+    getline(cin, input);
+    while (!isValidPath(input, userID))
+    {
+        getline(cin, input);
+    }
+    return input;
 }
 
 // LP4-25 - Fixed generateMonthlyPlan function
@@ -844,10 +868,10 @@ string startLoanApplication() {
     cout << "\n=== Section 4/4: Document Upload ===\n";
     setColor(COLOR_WHITE);
     
-    app.CNICFrontPath = input.getCNICFrontPath();
-    app.CNICBackPath = input.getCNICBackPath();
-    app.electricityBillPath = input.getElectricityBillPath();
-    app.salarySlipPath = input.getSalarySlipPath();
+    app.CNICFrontPath = input.getCNICFrontPath(app.applicationID);
+    app.CNICBackPath = input.getCNICBackPath(app.applicationID);
+    app.electricityBillPath = input.getElectricityBillPath(app.applicationID);
+    app.salarySlipPath = input.getSalarySlipPath(app.applicationID);
     
     // ===== FINAL CONFIRMATION =====
     system("cls");
@@ -1036,10 +1060,10 @@ string resumeApplication() {
         cout << "\nFinal Section: Documents\n";
         setColor(COLOR_WHITE);
         
-        app.CNICFrontPath = input.getCNICFrontPath();
-        app.CNICBackPath = input.getCNICBackPath();
-        app.electricityBillPath = input.getElectricityBillPath();
-        app.salarySlipPath = input.getSalarySlipPath();
+        app.CNICFrontPath = input.getCNICFrontPath(app.applicationID);
+        app.CNICBackPath = input.getCNICBackPath(app.applicationID);
+        app.electricityBillPath = input.getElectricityBillPath(app.applicationID);
+        app.salarySlipPath = input.getSalarySlipPath(app.applicationID);
         
         // Final confirmation
         system("cls");

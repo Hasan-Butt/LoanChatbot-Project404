@@ -37,7 +37,9 @@ public:
     // Process input for special commands or keywords
     // keywords: output array to store extracted keywords
     // return: number of keywords extracted
-    int extractKeywords(const string& input, string keywords[], int maxKeywords = MAX_KEYWORDS);
+
+    // LATEST UPDATE WE DONT NEED IT ! 
+   // int extractKeywords(const string& input, string keywords[], int maxKeywords = MAX_KEYWORDS);
 
     // ===== EPIC LP4-11 — INPUT COLLECTION Assigned to Hasan =====
 
@@ -76,11 +78,11 @@ public:
     string getReferencePhone(int refIndex);
     string getReferenceEmail(int refIndex);
 
-    // File uploads (paths)
-    string getCNICFrontPath();
-    string getCNICBackPath();
-    string getElectricityBillPath();
-    string getSalarySlipPath();
+    // File uploads (paths) // AYUB BUTT 
+    string getCNICFrontPath(const string& userID);
+    string getCNICBackPath(const string& userID);
+    string getElectricityBillPath(const string& userID);
+    string getSalarySlipPath(const string& userID);
     
 
 };
