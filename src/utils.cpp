@@ -492,36 +492,19 @@ string sourceDirectory = (pos == string::npos) ? "." : ImageFilePath.substr(0, p
 }
 
 
-bool checkUserFolderAccess(const string& ImageFilePath) {
-    try {
-        string sourceDirectory;
 
-        size_t pos = ImageFilePath.find_last_of("/\\");
-        if (pos == string::npos)
-        {
-            sourceDirectory = ".";
-        }
-        else
-        {
-            sourceDirectory = ImageFilePath.substr(0, pos);
-            if (sourceDirectory.empty())
-            {
-                sourceDirectory = ".";
-            }
-        }
+bool createApplicantFolder(const string& appID)
+{
+    // Creates a folder in the folder containing the exe file.
 
-        string testFile = sourceDirectory + "\\test_write_permission.tmp";
-        ofstream file(testFile);
-        if (file.is_open()) {
-            file.close();
-            remove(testFile.c_str());
-            return true;
-        }
-        return false;
-    }
-    catch (...) {
-        return false;
-    }
+    string Path = "Applications";
+
+    Path = "mkdir " + Path + "\\\\" + appID + " 2>nul"; // (mkdir Applications\\<appID> 2>nul)
+    // the 2>nul is added so because . if the folder Applications\\<appID> already existed,it was displaying message on console that it already exists automatically . adding this stops that console message!
+
+    int result = system(Path.c_str()); // result will be 1 is successfully created
+
+    return (result == 1); // returns true if created 
 }
 
 bool isValidPath(string& input, const string& applicantID)
@@ -669,16 +652,3 @@ bool isRefreeSame(const Application& app)
 
 
 
-bool createApplicantFolder(const string& appID)
-{
-    // Creates a folder in the folder containing the exe file.
-
-    string Path = "Applications";
-
-    Path = "mkdir " + Path + "\\\\" + appID + " 2>nul"; // (mkdir Applications\\<appID> 2>nul)
-    // the 2>nul is added so because . if the folder Applications\\<appID> already existed,it was displaying message on console that it already exists automatically . adding this stops that console message!
-
-    int result = system(Path.c_str()); // result will be 1 is successfully created
-
-    return (result == 1); // returns true if created 
-}
