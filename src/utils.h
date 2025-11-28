@@ -13,6 +13,8 @@
  */
 #ifndef UTILS_H
 #define UTILS_H
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <string>
 #include <vector>
@@ -47,7 +49,8 @@ bool isValidRate(double rate);
 // Loan calculations
 double calculateSimpleInterest(double principal, double rate, double time);
 
-
+// Logging
+void logInteraction(const string& userInput, const string& botResponse, const string& appID);
 
 // ===== Implementing Validation and utilities EPIC LP4-22 Assigned to Ayub =====
 // ===== VALIDATION =====
@@ -58,8 +61,15 @@ bool isValidDate(const string& date);
 bool isNumeric(const string& str);
 bool isAlpha(const string& str);
 bool isAlphaNumeric(const string& str);
+bool createApplicantFolder(const string& appID);
+bool isValidPath(string& input, const string& applicantID);
+bool isImageFile(const string& filepath);
 
+bool checkUserFolderAccess(const string& sourceDir);
 
+bool isRefreeSame(const Application& app);
+
+string removeSurroundingQuotes(string& inputPath);
 string generateApplicationID();
 string getCurrentDate();
 
