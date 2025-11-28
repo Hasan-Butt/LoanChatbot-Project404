@@ -47,8 +47,6 @@ bool isValidRate(double rate);
 // Loan calculations
 double calculateSimpleInterest(double principal, double rate, double time);
 
-
-
 // ===== Implementing Validation and utilities EPIC LP4-22 Assigned to Ayub =====
 // ===== VALIDATION =====
 bool isValidCNIC(const string& cnic);
@@ -58,7 +56,6 @@ bool isValidDate(const string& date);
 bool isNumeric(const string& str);
 bool isAlpha(const string& str);
 bool isAlphaNumeric(const string& str);
-
 
 string generateApplicationID();
 string getCurrentDate();
