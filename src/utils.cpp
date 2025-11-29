@@ -216,7 +216,7 @@ bool isValidCNIC(const string& cnic) {
 
     for (int i = 0;i < cnic.length();i++)
     {
-        if (cnic[i] < '0' || cnic[i]>'0')
+        if (cnic[i] < '0' || cnic[i]>'9')
         {
             cout << "\nCnic can only contain digits.";
 
@@ -268,9 +268,8 @@ bool isValidPhone(const string& phone)
 {
     int length = phone.length();
 
-    if (length != 13 || length != 11)
+    if (length != 13 && length != 11)
     {
-        cout << "\nInvalid Phone number!";
         return false;
     }
 
@@ -282,7 +281,7 @@ bool isValidPhone(const string& phone)
             {
                 if (phone[i] != '+')
                 {
-                    cout << "\nPhone number with international code starts with '+' !";
+                   // cout << "\nPhone number with international code starts with '+' !";
                     return false;
                 }
             }
@@ -292,7 +291,7 @@ bool isValidPhone(const string& phone)
                 {
                     if (phone[i] != '9')
                     {
-                        cout << "\n+92 is the code for Pakistan.";
+                      //  cout << "\n+92 is the code for Pakistan.";
                         return false;
                     }
                 }
@@ -300,7 +299,7 @@ bool isValidPhone(const string& phone)
                 {
                     if (phone[i] != '2')
                     {
-                        cout << "\n+92 is the code for Pakistan.";
+                       // cout << "\n+92 is the code for Pakistan.";
                         return false;
                     }
                 }
@@ -308,7 +307,7 @@ bool isValidPhone(const string& phone)
                 {
                     if (phone[i] != '3')
                     {
-                        cout << "\nPakistani Numbers start with 3!";
+                     //   cout << "\nPakistani Numbers start with 3!";
                         return false;
                     }
                 }
@@ -318,7 +317,7 @@ bool isValidPhone(const string& phone)
             {
                 if (phone[i]>'9'||phone[i]<'0')
                 {
-                    cout << "\nPhone number should only contain numbers!";
+                   // cout << "\nPhone number should only contain numbers!";
                     return false;
                 }
             }
@@ -333,7 +332,7 @@ bool isValidPhone(const string& phone)
             {
                 if (phone[i] != '0')
                 {
-                    cout << "\nPhone numbers start with 0.";
+                 //   cout << "\nPhone numbers start with 0.";
                     return false;
                 }
             }
@@ -341,7 +340,7 @@ bool isValidPhone(const string& phone)
             {
                 if (phone[i] != '3')
                 {
-                    cout << "\nPakistani Phone numbers have '3' after '0'.";
+                //    cout << "\nPakistani Phone numbers have '3' after '0'.";
                     return false;
                 }
             }
@@ -349,7 +348,7 @@ bool isValidPhone(const string& phone)
             {
                 if (phone[i] > '9' || phone[i] < '0')
                 {
-                    cout << "\nPhone number should only contain numbers!";
+                //    cout << "\nPhone number should only contain numbers!";
                     return false;
                 }
             }
@@ -552,6 +551,21 @@ bool createDataFolder(const string& appID)
 }
 
 
+string doubleBackslashes(const string& path)
+{
+    string result;
+
+    for (char c : path)
+    {
+        result += c;
+        if (c == '\\')
+            result += '\\';
+    }
+
+
+    return result;
+}
+
 bool isValidPath(string& input, const string& applicantID)
 {
     //this will validate path then store image in ./data/xxxx and return true
@@ -713,21 +727,5 @@ bool isRefreeSame(const Application& app)
 
 }
 
-
-string doubleBackslashes(const string& path)
-{
-    string result;
-
-    for (char c : path)
-    {
-        result += c;
-        if (c == '\\')
-            result += '\\';
-    }
-
-    cout << result;
-
-    return result;
-}
 
 
