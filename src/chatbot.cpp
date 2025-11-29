@@ -67,13 +67,17 @@ string ChatbotInput::validateInput(string& input) {
         if (check_spaces(input))
         {
           //  system("cls");
-            cout << "string contains only spaces! \n";
+            setColor(COLOR_RED);
+            cout << "You only entered spaces!\n";
+            setColor(COLOR_WHITE);
             getline(cin, input);
         }
         else
         {
            // system("cls");
-            cout << "empty string! \n";
+            setColor(COLOR_RED);
+            cout << "Please enter something!\n";
+            setColor(COLOR_WHITE);
             getline(cin, input);
         }
     }
@@ -870,8 +874,12 @@ string startLoanApplication() {
     
     app.CNICFrontPath = input.getCNICFrontPath(app.applicationID);
     app.CNICBackPath = input.getCNICBackPath(app.applicationID);
+
     app.electricityBillPath = input.getElectricityBillPath(app.applicationID);
     app.salarySlipPath = input.getSalarySlipPath(app.applicationID);
+    // how to add checks if user enters same paths for images?
+
+
     
     // ===== FINAL CONFIRMATION =====
     system("cls");

@@ -210,7 +210,7 @@ bool isValidCNIC(const string& cnic) {
     
     if (cnic.length() != 13)
     {
-        cout << "\nCnic can only be of 13 digits.";
+       // cout << "\nCnic can only be of 13 digits.";
         return false;
     }
 
@@ -218,8 +218,7 @@ bool isValidCNIC(const string& cnic) {
     {
         if (cnic[i] < '0' || cnic[i]>'9')
         {
-            cout << "\nCnic can only contain digits.";
-
+          //  cout << "\nCnic can only contain digits.";
             return false;
         }
     }
@@ -435,7 +434,6 @@ bool isImageFile(const string& filepath) {
         return false;
     }               // no extension found
     string extension = filepath.substr(dotPos);
-    cout << "\nextension ye hai be :" << extension << endl;
     // Convert to lowercase for case-insensitive comparison
     string lowerExtension = extension;
     for (char& c : lowerExtension)
@@ -475,7 +473,6 @@ bool checkUserFolderAccess(const string& ImageFilePath) {
         // Extract directory from the source file path
         size_t pos = ImageFilePath.find_last_of("\\/");
         string sourceDirectory = (pos == string::npos) ? "." : ImageFilePath.substr(0, pos);
-        cout << "\nsource directory:" << sourceDirectory << endl;
         // If no directory in path (like just "image.jpg"), use current directory
         /// do we need this or not? i'm unsure
 
@@ -578,12 +575,12 @@ bool isValidPath(string& input, const string& applicantID)
     {
         if (check_spaces(input))
         {
-            cout << "You only entered spaces! \n";
+            cout << "\nYou only entered spaces!";
             return false;
         }
         else
         {
-            cout << "Input is empty! \n";
+            cout << "\nInput is empty!";
             return false;
         }
     }
@@ -653,14 +650,13 @@ bool isValidPath(string& input, const string& applicantID)
     }
 
     string destinationPath = destinationDir + "\\" + filename;
-    cout << " \n    destination:" << destinationPath << endl;
     // Step 5: Manual file copy
     ifstream src(input, ios::binary);
     ofstream dst(destinationPath, ios::binary);
 
     if (!src.is_open() || !dst.is_open())
     {
-        cout << "Error: Failed to copy file!" << endl;
+        cout << "\nError: Failed to copy file!" << endl;
         return false;
     }
 
