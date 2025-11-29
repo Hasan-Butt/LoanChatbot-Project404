@@ -117,20 +117,20 @@ string removeCommas(string s) {
 //This is what I added to check the spaces 
 bool check_spaces(const string& input)
 {
-	int i = 0;
-	while (input[i]!='\0')
-	{
-		if (input[i] != ' ')
-			break;
-		i++;
-	}
+    int i = 0;
+    while (input[i] != '\0')
+    {
+        if (input[i] != ' ')
+            break;
+        i++;
+    }
 
-	if (i == input.length()&&i!=0) // if i==0 then it means the user only entered enter key wo uper wala while loop chle ga hi nhi, aour aap ne spaces ke liye check hi nhi kiya . then how can you say ke there are all or no spaces jb check hi nhi kiya to? its an empty string. an empty string!="   " a string which has spaces. so i!=0 to handle that thing.
-	{
-		return true;
-	}
-	
-	return false;
+    if (i == input.length() && i != 0) // if i==0 then it means the user only entered enter key wo uper wala while loop chle ga hi nhi, aour aap ne spaces ke liye check hi nhi kiya . then how can you say ke there are all or no spaces jb check hi nhi kiya to? its an empty string. an empty string!="   " a string which has spaces. so i!=0 to handle that thing.
+    {
+        return true;
+    }
+
+    return false;
 }
 // =================== Range / Domain Checks ===================
 
@@ -210,16 +210,15 @@ bool isValidCNIC(const string& cnic) {
     
     if (cnic.length() != 13)
     {
-        cout << "\nCnic can only be of 13 digits.";
+       // cout << "\nCnic can only be of 13 digits.";
         return false;
     }
 
     for (int i = 0;i < cnic.length();i++)
     {
-        if (cnic[i] < '0' || cnic[i]>'0')
+        if (cnic[i] < '0' || cnic[i]>'9')
         {
-            cout << "\nCnic can only contain digits.";
-
+          //  cout << "\nCnic can only contain digits.";
             return false;
         }
     }
@@ -268,9 +267,8 @@ bool isValidPhone(const string& phone)
 {
     int length = phone.length();
 
-    if (length != 13 || length != 11)
+    if (length != 13 && length != 11)
     {
-        cout << "\nInvalid Phone number!";
         return false;
     }
 
@@ -282,7 +280,7 @@ bool isValidPhone(const string& phone)
             {
                 if (phone[i] != '+')
                 {
-                    cout << "\nPhone number with international code starts with '+' !";
+                   // cout << "\nPhone number with international code starts with '+' !";
                     return false;
                 }
             }
@@ -292,7 +290,7 @@ bool isValidPhone(const string& phone)
                 {
                     if (phone[i] != '9')
                     {
-                        cout << "\n+92 is the code for Pakistan.";
+                      //  cout << "\n+92 is the code for Pakistan.";
                         return false;
                     }
                 }
@@ -300,7 +298,7 @@ bool isValidPhone(const string& phone)
                 {
                     if (phone[i] != '2')
                     {
-                        cout << "\n+92 is the code for Pakistan.";
+                       // cout << "\n+92 is the code for Pakistan.";
                         return false;
                     }
                 }
@@ -308,7 +306,7 @@ bool isValidPhone(const string& phone)
                 {
                     if (phone[i] != '3')
                     {
-                        cout << "\nPakistani Numbers start with 3!";
+                     //   cout << "\nPakistani Numbers start with 3!";
                         return false;
                     }
                 }
@@ -318,7 +316,7 @@ bool isValidPhone(const string& phone)
             {
                 if (phone[i]>'9'||phone[i]<'0')
                 {
-                    cout << "\nPhone number should only contain numbers!";
+                   // cout << "\nPhone number should only contain numbers!";
                     return false;
                 }
             }
@@ -333,7 +331,7 @@ bool isValidPhone(const string& phone)
             {
                 if (phone[i] != '0')
                 {
-                    cout << "\nPhone numbers start with 0.";
+                 //   cout << "\nPhone numbers start with 0.";
                     return false;
                 }
             }
@@ -341,7 +339,7 @@ bool isValidPhone(const string& phone)
             {
                 if (phone[i] != '3')
                 {
-                    cout << "\nPakistani Phone numbers have '3' after '0'.";
+                //    cout << "\nPakistani Phone numbers have '3' after '0'.";
                     return false;
                 }
             }
@@ -349,7 +347,7 @@ bool isValidPhone(const string& phone)
             {
                 if (phone[i] > '9' || phone[i] < '0')
                 {
-                    cout << "\nPhone number should only contain numbers!";
+                //    cout << "\nPhone number should only contain numbers!";
                     return false;
                 }
             }
@@ -452,24 +450,29 @@ bool isImageFile(const string& filepath) {
     return false;
 }
 
-string removeSurroundingQuotes(string& inputPath) {
+string removeSurroundingQuotes(string& inputPath)
+{
 
     // Remove surrounding quotes
-    if (inputPath.size() >= 2 &&
-        inputPath.front() == '"' &&
-        inputPath.back() == '"')
+    while (inputPath.size() >= 2 &&
+        inputPath.front() == '"')
     {
-        inputPath = inputPath.substr(1, inputPath.length() - 2);
+        inputPath = inputPath.erase(0, 1);  // str becomes "Hell";
     }
 
+    while (inputPath.size() >= 2 && inputPath.back() == '"')
+    {
+        inputPath.erase(inputPath.length() - 1);  //str becomes "ello"
+
+    }
     return inputPath;
 }
 
 bool checkUserFolderAccess(const string& ImageFilePath) {
     try {
         // Extract directory from the source file path
-size_t pos = ImageFilePath.find_last_of("\\/");
-string sourceDirectory = (pos == string::npos) ? "." : ImageFilePath.substr(0, pos);
+        size_t pos = ImageFilePath.find_last_of("\\/");
+        string sourceDirectory = (pos == string::npos) ? "." : ImageFilePath.substr(0, pos);
         // If no directory in path (like just "image.jpg"), use current directory
         /// do we need this or not? i'm unsure
 
@@ -504,7 +507,60 @@ bool createApplicantFolder(const string& appID)
 
     int result = system(Path.c_str()); // result will be 1 is successfully created
 
-    return (result == 1); // returns true if created 
+    // mkdir returns 0 on success, non-zero on failure
+// But if folder already exists, it's also fine
+// So we verify if folder exists after running
+    ifstream test(Path); // just checking existence
+    // We can use stat too
+    struct stat st;
+    if (stat(Path.c_str(), &st) == 0 && (st.st_mode & S_IFDIR))
+    {
+        return true; // Folder exists
+    }
+
+    return false; // Something went wrong
+}
+
+bool createDataFolder(const string& appID)
+{
+    // Base folder
+    string base = ".\\data";
+
+    // Build command
+    string command = "mkdir " + base + "\\\\" + appID + " 2>nul";
+
+    // Run command
+    int result = system(command.c_str());
+
+    // mkdir returns 0 on success, non-zero on failure
+    // But if folder already exists, it's also fine
+    // So we verify if folder exists after running
+    string folderPath = base + "\\\\" + appID;
+    ifstream test(folderPath); // just checking existence
+    // We can use stat too
+    struct stat st;
+    if (stat(folderPath.c_str(), &st) == 0 && (st.st_mode & S_IFDIR))
+    {
+        return true; // Folder exists
+    }
+
+    return false; // Something went wrong
+}
+
+
+string doubleBackslashes(const string& path)
+{
+    string result;
+
+    for (char c : path)
+    {
+        result += c;
+        if (c == '\\')
+            result += '\\';
+    }
+
+
+    return result;
 }
 
 bool isValidPath(string& input, const string& applicantID)
@@ -519,12 +575,12 @@ bool isValidPath(string& input, const string& applicantID)
     {
         if (check_spaces(input))
         {
-            cout << "You only entered spaces! \n";
+            cout << "\nYou only entered spaces!";
             return false;
         }
         else
         {
-            cout << "Input is empty! \n";
+            cout << "\nInput is empty!";
             return false;
         }
     }
@@ -535,13 +591,14 @@ bool isValidPath(string& input, const string& applicantID)
     size_t end = input.find_last_not_of(' '); //  checks from  right to left ,finds index of the first character that is not a space.
     input = input.substr(start, end - start + 1); // this basically makes a new string from the start index to the end-1 index [ which is our actual valid string ] 
 
+    input = removeSurroundingQuotes(input);
+    input = doubleBackslashes(input);
+
     if (!isImageFile(input))
     {
-        cout << "\nThis is not an image.\n";
+        cout << "\nThis is not an image.";
         return false;
     }
-
-    input = removeSurroundingQuotes(input);
 
     if (!checkUserFolderAccess(input))
     {
@@ -552,25 +609,35 @@ bool isValidPath(string& input, const string& applicantID)
     // Step 1: Check if source file exists
     if (!ifstream(input))
     {
-        cout << "Error: File not found: " << input << endl;
+        cout << "\nError: File not found: " << input << endl;
         return false;
     }
 
     struct stat pathStat;
-    if (stat(input.c_str(), &pathStat) != 0 || !(pathStat.st_mode & S_IFREG))
-        cout << "Error: Path is not a file: " << input << endl;
-    return false;
+    if (stat(input.c_str(), &pathStat) != 0)
+    {
+        cout << "\nError: Path does not exist: " << input << endl;
+        return false;
+    }
+
+    if (!(pathStat.st_mode & S_IFREG))
+    {
+        cout << "\nError: Path is not a regular file: " << input << endl;
+        return false;
+    }
+
 
 
     // Step 3: Create destination directory ./data/xxxx
 
     string destinationDir = ".\\data\\" + applicantID;
 
-    if (!createApplicantFolder(applicantID))
+    if (!createDataFolder(applicantID))
     {
-        cout << "Error: Failed to create destination folder!" << endl;
+        cout << "\nError: Failed to create destination folder!" << endl;
         return false;
     }
+
 
     // Step 4: Get filename and create destination path
     string filename;
@@ -589,21 +656,29 @@ bool isValidPath(string& input, const string& applicantID)
 
     if (!src.is_open() || !dst.is_open())
     {
-        cout << "Error: Failed to copy file!" << endl;
+        cout << "\nError: Failed to copy file!" << endl;
         return false;
     }
 
+    // Copy
     dst << src.rdbuf();
 
-    if (ifstream(destinationPath))
+    // CLOSE BOTH STREAMS
+    src.close();
+    dst.close();
+
+    // Verify file exists AND has size > 0
+    struct stat st;
+    if (stat(destinationPath.c_str(), &st) == 0 && st.st_size > 0)
     {
         return true;
     }
     else
     {
-        cout << "Error: File copy verification failed!" << endl;
+        cout << "\nError: File copy verification failed!" << endl;
         return false;
     }
+
 }
 
 
@@ -647,8 +722,6 @@ bool isRefreeSame(const Application& app)
     return toReturn;
 
 }
-
-
 
 
 

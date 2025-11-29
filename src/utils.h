@@ -61,16 +61,21 @@ bool isValidDate(const string& date);
 bool isNumeric(const string& str);
 bool isAlpha(const string& str);
 bool isAlphaNumeric(const string& str);
-bool createApplicantFolder(const string& appID);
-bool isValidPath(string& input, const string& applicantID);
-bool isImageFile(const string& filepath);
 
-bool checkUserFolderAccess(const string& sourceDir);
 
-bool isRefreeSame(const Application& app);
+bool createApplicantFolder(const string& appID); // works fine
+bool createDataFolder(const string& appID); //works fine now
 
+bool isValidPath(string& input, const string& applicantID);// works fine
+bool isImageFile(const string& filepath);// working fine
+bool checkUserFolderAccess(const string& ImageFilePath);
+
+string doubleBackslashes(const string& path);
 string removeSurroundingQuotes(string& inputPath);
 string generateApplicationID();
 string getCurrentDate();
+
+
+bool isRefreeSame(const Application& app);
 
 #endif
