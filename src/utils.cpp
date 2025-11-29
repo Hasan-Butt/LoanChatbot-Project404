@@ -117,20 +117,20 @@ string removeCommas(string s) {
 //This is what I added to check the spaces 
 bool check_spaces(const string& input)
 {
-	int i = 0;
-	while (input[i]!='\0')
-	{
-		if (input[i] != ' ')
-			break;
-		i++;
-	}
+    int i = 0;
+    while (input[i] != '\0')
+    {
+        if (input[i] != ' ')
+            break;
+        i++;
+    }
 
-	if (i == input.length()&&i!=0) // if i==0 then it means the user only entered enter key wo uper wala while loop chle ga hi nhi, aour aap ne spaces ke liye check hi nhi kiya . then how can you say ke there are all or no spaces jb check hi nhi kiya to? its an empty string. an empty string!="   " a string which has spaces. so i!=0 to handle that thing.
-	{
-		return true;
-	}
-	
-	return false;
+    if (i == input.length() && i != 0) // if i==0 then it means the user only entered enter key wo uper wala while loop chle ga hi nhi, aour aap ne spaces ke liye check hi nhi kiya . then how can you say ke there are all or no spaces jb check hi nhi kiya to? its an empty string. an empty string!="   " a string which has spaces. so i!=0 to handle that thing.
+    {
+        return true;
+    }
+
+    return false;
 }
 // =================== Range / Domain Checks ===================
 
@@ -436,6 +436,7 @@ bool isImageFile(const string& filepath) {
         return false;
     }               // no extension found
     string extension = filepath.substr(dotPos);
+    cout << "\nextension ye hai be :" << extension << endl;
     // Convert to lowercase for case-insensitive comparison
     string lowerExtension = extension;
     for (char& c : lowerExtension)
@@ -452,24 +453,30 @@ bool isImageFile(const string& filepath) {
     return false;
 }
 
-string removeSurroundingQuotes(string& inputPath) {
+string removeSurroundingQuotes(string& inputPath)
+{
 
     // Remove surrounding quotes
-    if (inputPath.size() >= 2 &&
-        inputPath.front() == '"' &&
-        inputPath.back() == '"')
+    while (inputPath.size() >= 2 &&
+        inputPath.front() == '"')
     {
-        inputPath = inputPath.substr(1, inputPath.length() - 2);
+        inputPath = inputPath.erase(0, 1);  // str becomes "Hell";
     }
 
+    while (inputPath.size() >= 2 && inputPath.back() == '"')
+    {
+        inputPath.erase(inputPath.length() - 1);  //str becomes "ello"
+
+    }
     return inputPath;
 }
 
 bool checkUserFolderAccess(const string& ImageFilePath) {
     try {
         // Extract directory from the source file path
-size_t pos = ImageFilePath.find_last_of("\\/");
-string sourceDirectory = (pos == string::npos) ? "." : ImageFilePath.substr(0, pos);
+        size_t pos = ImageFilePath.find_last_of("\\/");
+        string sourceDirectory = (pos == string::npos) ? "." : ImageFilePath.substr(0, pos);
+        cout << "\nsource directory:" << sourceDirectory << endl;
         // If no directory in path (like just "image.jpg"), use current directory
         /// do we need this or not? i'm unsure
 
@@ -504,8 +511,46 @@ bool createApplicantFolder(const string& appID)
 
     int result = system(Path.c_str()); // result will be 1 is successfully created
 
-    return (result == 1); // returns true if created 
+    // mkdir returns 0 on success, non-zero on failure
+// But if folder already exists, it's also fine
+// So we verify if folder exists after running
+    ifstream test(Path); // just checking existence
+    // We can use stat too
+    struct stat st;
+    if (stat(Path.c_str(), &st) == 0 && (st.st_mode & S_IFDIR))
+    {
+        return true; // Folder exists
+    }
+
+    return false; // Something went wrong
 }
+
+bool createDataFolder(const string& appID)
+{
+    // Base folder
+    string base = ".\\data";
+
+    // Build command
+    string command = "mkdir " + base + "\\\\" + appID + " 2>nul";
+
+    // Run command
+    int result = system(command.c_str());
+
+    // mkdir returns 0 on success, non-zero on failure
+    // But if folder already exists, it's also fine
+    // So we verify if folder exists after running
+    string folderPath = base + "\\\\" + appID;
+    ifstream test(folderPath); // just checking existence
+    // We can use stat too
+    struct stat st;
+    if (stat(folderPath.c_str(), &st) == 0 && (st.st_mode & S_IFDIR))
+    {
+        return true; // Folder exists
+    }
+
+    return false; // Something went wrong
+}
+
 
 bool isValidPath(string& input, const string& applicantID)
 {
@@ -535,13 +580,14 @@ bool isValidPath(string& input, const string& applicantID)
     size_t end = input.find_last_not_of(' '); //  checks from  right to left ,finds index of the first character that is not a space.
     input = input.substr(start, end - start + 1); // this basically makes a new string from the start index to the end-1 index [ which is our actual valid string ] 
 
+    input = removeSurroundingQuotes(input);
+    input = doubleBackslashes(input);
+
     if (!isImageFile(input))
     {
-        cout << "\nThis is not an image.\n";
+        cout << "\nThis is not an image.";
         return false;
     }
-
-    input = removeSurroundingQuotes(input);
 
     if (!checkUserFolderAccess(input))
     {
@@ -552,25 +598,35 @@ bool isValidPath(string& input, const string& applicantID)
     // Step 1: Check if source file exists
     if (!ifstream(input))
     {
-        cout << "Error: File not found: " << input << endl;
+        cout << "\nError: File not found: " << input << endl;
         return false;
     }
 
     struct stat pathStat;
-    if (stat(input.c_str(), &pathStat) != 0 || !(pathStat.st_mode & S_IFREG))
-        cout << "Error: Path is not a file: " << input << endl;
-    return false;
+    if (stat(input.c_str(), &pathStat) != 0)
+    {
+        cout << "\nError: Path does not exist: " << input << endl;
+        return false;
+    }
+
+    if (!(pathStat.st_mode & S_IFREG))
+    {
+        cout << "\nError: Path is not a regular file: " << input << endl;
+        return false;
+    }
+
 
 
     // Step 3: Create destination directory ./data/xxxx
 
     string destinationDir = ".\\data\\" + applicantID;
 
-    if (!createApplicantFolder(applicantID))
+    if (!createDataFolder(applicantID))
     {
-        cout << "Error: Failed to create destination folder!" << endl;
+        cout << "\nError: Failed to create destination folder!" << endl;
         return false;
     }
+
 
     // Step 4: Get filename and create destination path
     string filename;
@@ -583,6 +639,7 @@ bool isValidPath(string& input, const string& applicantID)
     }
 
     string destinationPath = destinationDir + "\\" + filename;
+    cout << " \n    destination:" << destinationPath << endl;
     // Step 5: Manual file copy
     ifstream src(input, ios::binary);
     ofstream dst(destinationPath, ios::binary);
@@ -593,17 +650,25 @@ bool isValidPath(string& input, const string& applicantID)
         return false;
     }
 
+    // Copy
     dst << src.rdbuf();
 
-    if (ifstream(destinationPath))
+    // CLOSE BOTH STREAMS
+    src.close();
+    dst.close();
+
+    // Verify file exists AND has size > 0
+    struct stat st;
+    if (stat(destinationPath.c_str(), &st) == 0 && st.st_size > 0)
     {
         return true;
     }
     else
     {
-        cout << "Error: File copy verification failed!" << endl;
+        cout << "\nError: File copy verification failed!" << endl;
         return false;
     }
+
 }
 
 
@@ -649,6 +714,20 @@ bool isRefreeSame(const Application& app)
 }
 
 
+string doubleBackslashes(const string& path)
+{
+    string result;
 
+    for (char c : path)
+    {
+        result += c;
+        if (c == '\\')
+            result += '\\';
+    }
+
+    cout << result;
+
+    return result;
+}
 
 
