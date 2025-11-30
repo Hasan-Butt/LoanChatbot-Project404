@@ -216,7 +216,7 @@ bool isValidCNIC(const string& cnic) {
 
     for (int i = 0;i < cnic.length();i++)
     {
-        if (cnic[i] < '0' || cnic[i]>'0')
+        if (cnic[i] < '0' || cnic[i]>'9')
         {
             cout << "\nCnic can only contain digits.";
 
@@ -268,97 +268,78 @@ bool isValidPhone(const string& phone)
 {
     int length = phone.length();
 
-    if (length != 13 || length != 11)
+    // Length must be either 11 (local) or 13 (international)
+    if (!(length == 11 || length == 13))
     {
-        cout << "\nInvalid Phone number!";
+        cout << "\nInvalid Phone number length!";
         return false;
     }
 
+    // -------------------------------
+    // INTERNATIONAL FORMAT: +923XXXXXXXXX
+    // -------------------------------
     if (length == 13)
     {
-        for (int i = 0;i < length;i++)
+        if (phone[0] != '+')
         {
-            if (i == 0)
-            {
-                if (phone[i] != '+')
-                {
-                    cout << "\nPhone number with international code starts with '+' !";
-                    return false;
-                }
-            }
-            else if (i == 1||i==2||i==3)
-            {
-                if (i == 1)
-                {
-                    if (phone[i] != '9')
-                    {
-                        cout << "\n+92 is the code for Pakistan.";
-                        return false;
-                    }
-                }
-                else if(i==2)
-                {
-                    if (phone[i] != '2')
-                    {
-                        cout << "\n+92 is the code for Pakistan.";
-                        return false;
-                    }
-                }
-                else
-                {
-                    if (phone[i] != '3')
-                    {
-                        cout << "\nPakistani Numbers start with 3!";
-                        return false;
-                    }
-                }
-            }
+            cout << "\nInternational phone number must start with '+'!";
+            return false;
+        }
+        if (phone[1] != '9' || phone[2] != '2')
+        {
+            cout << "\n+92 is the correct Pakistan country code!";
+            return false;
+        }
+        if (phone[3] != '3')
+        {
+            cout << "\nPakistani mobile numbers start with 3!";
+            return false;
+        }
 
-            else
+        // Remaining must be digits
+        for (int i = 4; i < 13; i++)
+        {
+            if (phone[i] < '0' || phone[i] > '9')
             {
-                if (phone[i]>'9'||phone[i]<'0')
-                {
-                    cout << "\nPhone number should only contain numbers!";
-                    return false;
-                }
+                cout << "\nPhone number should only contain digits after +923!";
+                return false;
             }
         }
+
+        return true;
     }
 
-    else
+    // -------------------------------
+    // LOCAL FORMAT: 03XXXXXXXXX
+    // -------------------------------
+    if (length == 11)
     {
-        for (int i = 0;i < length;i++)
+        if (phone[0] != '0')
         {
-            if (i == 0)
-            {
-                if (phone[i] != '0')
-                {
-                    cout << "\nPhone numbers start with 0.";
-                    return false;
-                }
-            }
-            else if (i == 1)
-            {
-                if (phone[i] != '3')
-                {
-                    cout << "\nPakistani Phone numbers have '3' after '0'.";
-                    return false;
-                }
-            }
-            else
-            {
-                if (phone[i] > '9' || phone[i] < '0')
-                {
-                    cout << "\nPhone number should only contain numbers!";
-                    return false;
-                }
-            }
-            
+            cout << "\nLocal phone number must start with 0!";
+            return false;
         }
+        if (phone[1] != '3')
+        {
+            cout << "\nPakistani mobile numbers have '3' after '0'!";
+            return false;
+        }
+
+        for (int i = 2; i < 11; i++)
+        {
+            if (phone[i] < '0' || phone[i] > '9')
+            {
+                cout << "\nPhone number should only contain digits!";
+                return false;
+            }
+        }
+
+        return true;
     }
 
-    return true;
+    return false; // fallback (never reached)
 }
+
 
 // Validate date format (DD-MM-YYYY)
 bool isValidDate(const string& date) {
@@ -556,10 +537,16 @@ bool isValidPath(string& input, const string& applicantID)
         return false;
     }
 
-    struct stat pathStat;
-    if (stat(input.c_str(), &pathStat) != 0 || !(pathStat.st_mode & S_IFREG))
-        cout << "Error: Path is not a file: " << input << endl;
-    return false;
+    DWORD attrs = GetFileAttributesA(input.c_str());
+    if (attrs == INVALID_FILE_ATTRIBUTES) {
+        cout << "Error: Path does not exist or is inaccessible: " << input << endl;
+        return false;
+    }
+    if (attrs & FILE_ATTRIBUTE_DIRECTORY) {
+        cout << "Error: Path is a directory, not a file: " << input << endl;
+        return false;
+    }
+
 
 
     // Step 3: Create destination directory ./data/xxxx
