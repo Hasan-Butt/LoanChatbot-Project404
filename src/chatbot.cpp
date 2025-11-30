@@ -470,7 +470,7 @@ string ChatbotInput::getReferenceDate(int refIndex) {
 
     string date;
     while (true) {
-        cout << "Enter Reference " << refIndex << " Date (DD-MM-YYYY): ";
+        cout << "Enter Reference " << refIndex << " CNIC Issue Date (DD-MM-YYYY): ";
         date = readUserInput();
 
         if (isValidDate(date)) {
@@ -1832,10 +1832,10 @@ string ChatbotProcessor::generateResponse(const string& input, string filename) 
             
             setColor(COLOR_YELLOW);
             string prompt = "\n╔════════════════════════════════════════════════════════════╗\n";
-            prompt +=         "║  🤖   Your input matches general conversation.            ║\n";
+            prompt +=         "║  🤖   Your input matches general conversation.             ║\n";
             prompt +=         "║                                                            ║\n";
-            prompt +=         "║  Would you like to enter Conversation Mode?               ║\n";
-            prompt +=         "║  (You can chat casually until you use loan commands)      ║\n";
+            prompt +=         "║  Would you like to enter Conversation Mode?                ║\n";
+            prompt +=         "║  (You can chat casually until you use loan commands)       ║\n";
             prompt +=         "╚════════════════════════════════════════════════════════════╝\n";
             prompt += "\n👉 Enter YES to chat, or NO for standard response: ";
             setColor(COLOR_WHITE);

@@ -107,8 +107,9 @@ void LenderDashboard::viewAllApplications() {
         if (!app.applicationID.empty()) {
             cout << left << setw(15) << app.applicationID
                  << setw(25) << app.fullName
-                 << setw(20) << app.CNIC
-                 << setw(15) << app.status << "\n";
+                 << setw(20) << app.CNIC;
+            if (app.checkpoint == "Submitted") cout << setw(15) << app.status << "\n";
+            else cout << setw(15) << "Incomplete" << "\n";
         }
         
     } while (FindNextFileA(hFind, &findData));
@@ -176,7 +177,9 @@ void LenderDashboard::viewApplicationDetails() {
     setColor(COLOR_WHITE);
     
     cout << "ID:             " << app.applicationID << "\n";
-    cout << "Status:         " << app.status << "\n";
+    cout << "Status:         ";
+    if (app.checkpoint == "Submitted") cout << app.status << "\n";
+    else cout << "Incomplete\n";
     cout << "Name:           " << app.fullName << "\n";
     cout << "Father's Name:  " << app.fatherName << "\n";
     cout << "CNIC:           " << app.CNIC << "\n";
@@ -239,6 +242,7 @@ Application LenderDashboard::loadApplication(const string& appID) {
     while (getline(file, line)) {
         if (line.find("ApplicationID:") == 0) app.applicationID = line.substr(14);
         else if (line.find("Status:") == 0) app.status = line.substr(7);
+        else if (line.find("Checkpoint:")==0) app.checkpoint = line.substr(11);
         else if (line.find("FullName:") == 0) app.fullName = line.substr(9);
         else if (line.find("FatherName:") == 0) app.fatherName = line.substr(11);
         else if (line.find("CNIC:") == 0) app.CNIC = line.substr(5);
@@ -272,12 +276,36 @@ bool LenderDashboard::updateApplicationStatus(const string& appID, const string&
     }
     
     string line;
+    string prevLine;   // keep track of the last line (for Status)
+    bool shouldChange = false;
+
     while (getline(inFile, line)) {
         if (line.find("Status:") == 0) {
-            outFile << "Status:" << newStatus << "\n";
+            // Don't write immediately, wait to see Checkpoint
+            prevLine = line;
+        } else if (line.find("Checkpoint:") == 0) {
+            // If checkpoint is Submitted, change the status
+            if (line.find("Submitted") != string::npos) {
+                outFile << "Status:" << newStatus << "\n";
+            } else {
+                outFile << prevLine << "\n"; // keep original status
+                return false;
+            }
+            outFile << line << "\n"; // write checkpoint line
+            prevLine.clear();
         } else {
+            // If there was a pending Status without Checkpoint, write it
+            if (!prevLine.empty()) {
+                outFile << prevLine << "\n";
+                prevLine.clear();
+            }
             outFile << line << "\n";
         }
+    }
+
+    // Edge case: file ends before Checkpoint line
+    if (!prevLine.empty()) {
+        outFile << prevLine << "\n";
     }
     
     inFile.close();

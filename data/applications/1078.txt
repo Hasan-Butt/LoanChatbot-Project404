@@ -1,5 +1,6 @@
 ApplicationID:1078
-Status:Submitted
+Status:Approved
+Checkpoint:Submitted
 
 FullName:john
 FatherName:sarmad
