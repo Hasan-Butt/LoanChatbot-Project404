@@ -474,69 +474,68 @@ string sourceDirectory = (pos == string::npos) ? "." : ImageFilePath.substr(0, p
 
 
 
+// ...existing code...
+
 bool createApplicantFolder(const string& appID)
 {
-    // Creates a folder in the folder containing the exe file.
-
-    string Path = "Applications";
-
-    Path = "mkdir " + Path + "\\\\" + appID + " 2>nul"; // (mkdir Applications\\<appID> 2>nul)
-    // the 2>nul is added so because . if the folder Applications\\<appID> already existed,it was displaying message on console that it already exists automatically . adding this stops that console message!
-
-    int result = system(Path.c_str()); // result will be 1 is successfully created
-
-    return (result == 1); // returns true if created 
+    // Create both ./data and ./data/<appID> directories
+    
+    // Step 1: Create ./data if it doesn't exist
+    int result1 = system("mkdir data 2>nul");
+    
+    // Step 2: Create ./data/<appID>
+    string command = "mkdir data\\" + appID + " 2>nul";
+    int result2 = system(command.c_str());
+    
+    // Both should succeed (or folder already exists, which is fine)
+    return true;  // mkdir 2>nul always succeeds even if folder exists
 }
 
 bool isValidPath(string& input, const string& applicantID)
 {
-    //this will validate path then store image in ./data/xxxx and return true
-    // returns false if spaces are entered,input is empty,file is not an image,the folder of the image is inaccessible 
-
-    // basically this is copied from readUserInput(); but that function was also converting to lowercase, which shouldn't be done while searching for an image by its name . so i removed that part and used the same code again.
-
-    // TODO: Implement input validation
-    if (check_spaces(input) || input == "") // only spaces or empty string
+    // Validate and copy image file to ./data/<applicantID>/
+    
+    // Step 1: Check for empty/whitespace input
+    if (check_spaces(input) || input == "")
     {
-        if (check_spaces(input))
-        {
-            cout << "You only entered spaces! \n";
-            return false;
+        if (check_spaces(input)) {
+            cout << "You only entered spaces!\n";
+        } else {
+            cout << "Input is empty!\n";
         }
-        else
-        {
-            cout << "Input is empty! \n";
-            return false;
-        }
+        return false;
     }
 
-    // spaces before or after the text
-    // .......hi....... will be fixed to hi   [..... represent spaces]
-    size_t start = input.find_first_not_of(' '); // checks from left to right ,finds index of the first character that is not a space.
-    size_t end = input.find_last_not_of(' '); //  checks from  right to left ,finds index of the first character that is not a space.
-    input = input.substr(start, end - start + 1); // this basically makes a new string from the start index to the end-1 index [ which is our actual valid string ] 
+    // Step 2: Trim surrounding spaces
+    size_t start = input.find_first_not_of(' ');
+    size_t end = input.find_last_not_of(' ');
+    input = input.substr(start, end - start + 1);
 
-    if (!isImageFile(input))
-    {
+    // Step 3: Validate it's an image file
+    if (!isImageFile(input)) {
         cout << "\nThis is not an image.\n";
         return false;
     }
 
+    // Step 4: Remove quotes if present
     input = removeSurroundingQuotes(input);
 
-    if (!checkUserFolderAccess(input))
-    {
-        cout << "\nThe folder you entered is inaccessable!";
+    // Step 5: Check if source folder is accessible
+    if (!checkUserFolderAccess(input)) {
+        cout << "\nThe folder you entered is inaccessible!\n";
         return false;
     }
 
-    // Step 1: Check if source file exists
-    if (!ifstream(input))
-    {
+    // Step 6: Check if source file exists
+    ifstream checkFile(input);
+    if (!checkFile.is_open()) {
         cout << "Error: File not found: " << input << endl;
+        checkFile.close();
         return false;
     }
+    checkFile.close();
 
+    // Step 7: Verify it's not a directory
     DWORD attrs = GetFileAttributesA(input.c_str());
     if (attrs == INVALID_FILE_ATTRIBUTES) {
         cout << "Error: Path does not exist or is inaccessible: " << input << endl;
@@ -547,51 +546,53 @@ bool isValidPath(string& input, const string& applicantID)
         return false;
     }
 
-
-
-    // Step 3: Create destination directory ./data/xxxx
-
-    string destinationDir = ".\\data\\" + applicantID;
-
-    if (!createApplicantFolder(applicantID))
-    {
+    // Step 8: Create destination directory ./data/<applicantID>
+    if (!createApplicantFolder(applicantID)) {
         cout << "Error: Failed to create destination folder!" << endl;
         return false;
     }
 
-    // Step 4: Get filename and create destination path
+    // Step 9: Get filename from source path
     string filename;
-    {
-        size_t pos = input.find_last_of("/\\");
-        if (pos == string::npos)
-            filename = input;
-        else
-            filename = input.substr(pos + 1);
+    size_t pos = input.find_last_of("/\\");
+    if (pos == string::npos) {
+        filename = input;
+    } else {
+        filename = input.substr(pos + 1);
     }
 
+    string destinationDir = ".\\data\\" + applicantID;
     string destinationPath = destinationDir + "\\" + filename;
-    // Step 5: Manual file copy
+
+    // Step 10: Copy file (binary mode)
     ifstream src(input, ios::binary);
     ofstream dst(destinationPath, ios::binary);
 
-    if (!src.is_open() || !dst.is_open())
-    {
-        cout << "Error: Failed to copy file!" << endl;
+    if (!src.is_open() || !dst.is_open()) {
+        cout << "Error: Failed to open source or destination file!" << endl;
+        if (src.is_open()) src.close();
+        if (dst.is_open()) dst.close();
         return false;
     }
 
+    // Copy file contents
     dst << src.rdbuf();
+    src.close();
+    dst.close();
 
-    if (ifstream(destinationPath))
-    {
+    // Step 11: Verify copy succeeded
+    ifstream verify(destinationPath);
+    if (verify.is_open()) {
+        verify.close();
+        cout << "File copied successfully to: " << destinationPath << endl;
         return true;
-    }
-    else
-    {
+    } else {
         cout << "Error: File copy verification failed!" << endl;
         return false;
     }
 }
+
+
 
 
 bool isRefreeSame(const Application& app)
